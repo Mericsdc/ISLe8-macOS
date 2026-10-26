@@ -1,0 +1,16 @@
+ISLe8 for macOS
+Copyright 2026 Meriç Sadıç (LRXe8)
+
+Licensed under the Apache License, Version 2.0 (see LICENSE). The ISLe8 and
+LRXe8 names and logos are not licensed under it (see TRADEMARKS.md).
+
+This product includes work by others:
+
+- LimitBar (https://github.com/dancik/limitbar), MIT License,
+  Copyright (c) 2026 dancik. The usage-limit data layer in
+  ISLe8/Modules/Usage is ported from it; the license text ships with the app
+  as ISLe8/Resources/LimitBar-LICENSE.txt.
+
+- The vendor marks in ISLe8/Resources/usage-marks come from Simple Icons
+  (https://simpleicons.org), CC0 1.0. The marks themselves remain trademarks
+  of their owners.

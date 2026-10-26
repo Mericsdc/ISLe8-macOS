@@ -1,0 +1,2 @@
+// Copy to Local.xcconfig (git ignores it) and put your own team ID here.
+DEVELOPMENT_TEAM = ABCDE12345

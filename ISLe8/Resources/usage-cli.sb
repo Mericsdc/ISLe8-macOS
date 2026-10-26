@@ -1,0 +1,41 @@
+;; usage-cli.sb — the macOS Seatbelt profile ISLe8 runs codex and agy under (sandbox-exec), to ask
+;; each one a single quota question. Ported unchanged from LimitBar LRX's Resources/cli.sb (based on
+;; dancik/limitbar, MIT License; see LimitBar-LICENSE.txt).
+;; Parameters (set by UsageSandbox.wrap in ISLe8/Modules/Usage/UsageFetchers.swift):
+;;   HOME     your home folder            STATE   the CLI's own folder (~/.codex, ~/.gemini)
+;;   EXEC     the CLI's executable        EXECDIR the CLI's own install folder
+;;   INTERP   its interpreter, if it is a script (else = EXEC)
+;;   PTMP     ISLe8's private 0700 temp folder (the CLI's working directory and TMPDIR)
+;; Only for agy (Google Antigravity), which needs them to sign in and to reach its local helper; for the
+;; other CLIs they point nowhere:
+;;   HELPER   /usr/bin/security (reads agy's sign-in from your keychain)
+;;   KEYCHAINS ~/Library/Keychains     SHAREDTMP /private/tmp
+;; The CLI may start no program outside its own install folder — so no MCP server, hook or plugin
+;; configured anywhere can run — and can read or write nothing of yours but its own STATE folder.
+;; Network stays open: the quota answer comes from the vendor. In SBPL the LAST matching rule wins.
+(version 1)
+(allow default)
+
+;; ---- programs ----
+(deny process-exec)
+(allow process-exec (literal (param "EXEC")) (literal (param "INTERP")) (literal "/usr/bin/env")
+                    (subpath (param "EXECDIR")))
+
+;; ---- files: no home folders, other users, volumes or shared temp ... ----
+(deny file-read* file-write*
+  (subpath "/Users") (subpath (param "HOME")) (subpath "/Volumes")
+  (subpath "/private/tmp") (subpath "/private/var/folders"))
+;; stat() of any path stays allowed — Node and Go resolve real paths component by component. It gives
+;; existence, type and size of a path the CLI already knows; no file contents, no directory listings.
+(allow file-read-metadata)
+;; ... except the CLI's own state, install folder and ISLe8's private temp
+(allow file-read* file-write* (subpath (param "STATE")) (subpath (param "PTMP")))
+(allow file-read* (subpath (param "EXECDIR")) (literal (param "EXEC")) (literal (param "INTERP")))
+
+;; ---- writes: nowhere else ----
+(deny file-write* (require-not (require-any (subpath (param "STATE")) (subpath (param "PTMP")))))
+(allow file-write* (literal "/dev/null") (literal "/dev/tty") (regex #"^/dev/fd/") (regex #"^/dev/ttys"))
+
+;; ---- agy only (see parameters above) ----
+(allow process-exec (literal (param "HELPER")))
+(allow file-read* file-write* (subpath (param "KEYCHAINS")) (subpath (param "SHAREDTMP")))

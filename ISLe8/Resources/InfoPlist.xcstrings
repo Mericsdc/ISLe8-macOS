@@ -1,0 +1,102 @@
+{
+  "sourceLanguage": "tr",
+  "strings": {
+    "CFBundleDisplayName": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ISLe8"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ISLe8"
+          }
+        }
+      }
+    },
+    "CFBundleName": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ISLe8"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ISLe8"
+          }
+        }
+      }
+    },
+    "NSAppleEventsUsageDescription": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ISLe8 uses this to control Spotify and Music: play, pause and change songs."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ISLe8, Spotify ve Music'i oynat, duraklat ve şarkı değiştir komutlarıyla kontrol etmek için bu izni kullanır."
+          }
+        }
+      }
+    },
+    "NSCalendarsFullAccessUsageDescription": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ISLe8 reads your calendar to show upcoming meetings on the island and remind you before they start."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ISLe8, sıradaki toplantılarını adada göstermek ve başlamadan önce hatırlatmak için takvimini okur."
+          }
+        }
+      }
+    },
+    "NSHumanReadableCopyright": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "© 2026 LRXe8"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "© 2026 LRXe8"
+          }
+        }
+      }
+    },
+    "NSRemindersFullAccessUsageDescription": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ISLe8 reads your reminders to show what's due today on the island."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ISLe8, bugün yapılacak hatırlatıcılarını adada göstermek için hatırlatıcılarını okur."
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

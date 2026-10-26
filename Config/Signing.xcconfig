@@ -1,0 +1,5 @@
+// Signing for ISLe8. Your Apple team goes in Local.xcconfig next to this file, which git
+// ignores: copy Local.xcconfig.example to Local.xcconfig and set DEVELOPMENT_TEAM (Xcode >
+// Settings > Accounts shows it; a free Personal Team works). Without it, Xcode asks for a
+// team when you build.
+#include? "Local.xcconfig"

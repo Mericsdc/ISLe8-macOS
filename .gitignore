@@ -1,0 +1,17 @@
+# Build output (scripts/build.sh, Xcode)
+build/
+DerivedData/
+
+# Per-user Xcode state
+xcuserdata/
+*.xcuserstate
+*.xcscmblueprint
+
+# macOS
+.DS_Store
+
+# Local Claude Code settings
+.claude/settings.local.json
+
+# Your Apple team for signing (copy Config/Local.xcconfig.example)
+Config/Local.xcconfig
