@@ -51,26 +51,27 @@ struct MediaAlertView: View {
 
 // MARK: Player
 
-/// Home's media column: artwork and title, the scrubber, shuffle / previous / play / next /
-/// repeat, and the Mac's output volume. The controls stay even when nothing plays, so play
-/// can wake the last player.
+/// Home's media column. Dashboard: artwork and title, the scrubber, shuffle / previous /
+/// play / next / repeat, and the Mac's output volume. Compact: artwork beside the title and
+/// the controls. Minimal: one line. The controls stay even when nothing plays, so play can
+/// wake the last player.
 struct MediaColumn: View {
     @Environment(NowPlayingService.self) private var media
     @Environment(HUDModule.self) private var hud
     @Environment(SettingsStore.self) private var settings
 
     var body: some View {
-        if settings.homeStyle == .minimal {
-            minimal
-        } else {
-            full
+        switch settings.homeStyle {
+        case .dashboard: full
+        case .compact: compact
+        case .minimal: minimal
         }
     }
 
     /// The minimal strip: small artwork, the title, previous / play / next.
     private var minimal: some View {
         let info = media.info
-        return HStack(spacing: 8) {
+        return HStack(spacing: 6) {
             ArtworkView(image: info?.artwork, size: 38, radius: 8)
             VStack(alignment: .leading, spacing: 1) {
                 Text(info?.title ?? String(localized: "Şu an bir şey çalmıyor"))
@@ -84,39 +85,68 @@ struct MediaColumn: View {
                 }
             }
             Spacer(minLength: 4)
+            TransportButton(systemImage: "backward.fill", help: "Önceki") { media.perform(.previous) }
             TransportButton(
                 systemImage: info?.isPlaying == true ? "pause.fill" : "play.fill",
                 help: info?.isPlaying == true ? LocalizedStringKey("Duraklat") : LocalizedStringKey("Oynat"),
                 isProminent: true
             ) {
-                media.perform(.togglePlayPause)
+                playOrResume()
             }
             TransportButton(systemImage: "forward.fill", help: "Sonraki") { media.perform(.next) }
         }
-        .padding(.horizontal, 10)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .islandTile()
     }
 
-    /// Dashboard and compact: the same parts, compact smaller.
+    /// The compact strip: artwork, and beside it the title over the controls; with Spotify
+    /// playing, Spotify's own volume underneath.
+    private var compact: some View {
+        VStack(spacing: 7) {
+            compactPlayer
+            if media.info?.bundleID == PlayerApp.spotify.rawValue {
+                SpotifyVolumeBar()
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private var compactPlayer: some View {
+        let info = media.info
+        return HStack(spacing: 10) {
+            ArtworkView(image: info?.artwork, size: 64, radius: 10)
+                .shadow(color: Color.black.opacity(0.35), radius: 6, y: 3)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(info?.title ?? String(localized: "Şu an bir şey çalmıyor"))
+                    .font(.system(size: 13, weight: .semibold))
+                Text(info.map { $0.artist } ?? String(localized: "Spotify, Music ya da tarayıcıda bir şey başlat."))
+                    .font(.system(size: 10.5))
+                    .foregroundStyle(Color.white.opacity(0.55))
+                Spacer(minLength: 0)
+                controls(playSize: 34, accentRing: true)
+            }
+            .lineLimit(1)
+            .frame(height: 64)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    /// Dashboard: artwork and title, scrubber, controls, volume, spread over the full height.
     private var full: some View {
         let info = media.info
-        let isCompact = settings.homeStyle == .compact
-        let artwork: CGFloat = isCompact ? 56 : 104
-        // The rows spread over the column's full height.
+        let artwork: CGFloat = 104
         return VStack(spacing: 0) {
             HStack(alignment: .top, spacing: 12) {
-                ArtworkView(image: info?.artwork, size: artwork, radius: isCompact ? 10 : 14)
+                ArtworkView(image: info?.artwork, size: artwork, radius: 14)
                     .shadow(color: Color.black.opacity(0.35), radius: 8, y: 4)
                 VStack(alignment: .leading, spacing: 3) {
                     Spacer(minLength: 0)
                     Text(info?.title ?? String(localized: "Şu an bir şey çalmıyor"))
-                        .font(.system(size: isCompact ? 12 : 13, weight: .semibold))
-                        .lineLimit(isCompact ? 1 : 2)
+                        .font(.system(size: 13, weight: .semibold))
+                        .lineLimit(2)
                     Text(info.map { $0.artist } ?? String(localized: "Spotify, Music ya da tarayıcıda bir şey başlat."))
-                        .font(.system(size: isCompact ? 10 : 11))
+                        .font(.system(size: 11))
                         .foregroundStyle(Color.white.opacity(0.55))
-                        .lineLimit(isCompact ? 1 : 2)
+                        .lineLimit(2)
                     Spacer(minLength: 0)
                 }
                 .frame(height: artwork)
@@ -140,26 +170,7 @@ struct MediaColumn: View {
                 }
             }
             Spacer(minLength: 8)
-
-            HStack {
-                ModeButton(systemImage: "shuffle", isOn: info?.isShuffling == true, help: "Karışık çal") {
-                    media.perform(.advanceShuffle)
-                }
-                Spacer(minLength: 0)
-                TransportButton(systemImage: "backward.fill", help: "Önceki") { media.perform(.previous) }
-                Spacer(minLength: 0)
-                PlayButton(isPlaying: info?.isPlaying == true, size: isCompact ? 40 : 52) { media.perform(.togglePlayPause) }
-                Spacer(minLength: 0)
-                TransportButton(systemImage: "forward.fill", help: "Sonraki") { media.perform(.next) }
-                Spacer(minLength: 0)
-                ModeButton(
-                    systemImage: info?.repeatMode == .one ? "repeat.1" : "repeat",
-                    isOn: (info?.repeatMode ?? .off) != .off,
-                    help: "Tekrarla"
-                ) {
-                    media.perform(.advanceRepeat)
-                }
-            }
+            controls(playSize: 52)
             Spacer(minLength: 8)
 
             if let volume = hud.outputVolume {
@@ -178,9 +189,44 @@ struct MediaColumn: View {
                 }
             }
         }
-        .padding(isCompact ? 10 : 14)
+        .padding(14)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .islandTile()
+    }
+
+    /// Play/pause; with nothing playing, opens the default player and resumes it.
+    private func playOrResume() {
+        if media.info == nil {
+            media.resume(preferring: PlayerApp(rawValue: settings.defaultPlayer))
+        } else {
+            media.perform(.togglePlayPause)
+        }
+    }
+
+    /// Shuffle / previous / play / next / repeat, spread across the width.
+    private func controls(playSize: CGFloat, accentRing: Bool = false) -> some View {
+        let info = media.info
+        return HStack(spacing: 0) {
+            ModeButton(systemImage: "shuffle", isOn: info?.isShuffling == true, help: "Karışık çal") {
+                media.perform(.advanceShuffle)
+            }
+            Spacer(minLength: 0)
+            TransportButton(systemImage: "backward.fill", help: "Önceki") { media.perform(.previous) }
+            Spacer(minLength: 0)
+            PlayButton(isPlaying: info?.isPlaying == true, size: playSize, accentRing: accentRing) {
+                playOrResume()
+            }
+            Spacer(minLength: 0)
+            TransportButton(systemImage: "forward.fill", help: "Sonraki") { media.perform(.next) }
+            Spacer(minLength: 0)
+            ModeButton(
+                systemImage: info?.repeatMode == .one ? "repeat.1" : "repeat",
+                isOn: (info?.repeatMode ?? .off) != .off,
+                help: "Tekrarla"
+            ) {
+                media.perform(.advanceRepeat)
+            }
+        }
     }
 
     private static func speaker(_ volume: Double) -> String {
@@ -193,10 +239,12 @@ struct MediaColumn: View {
     }
 }
 
-/// The large play button in a ring, as the centre of the controls.
+/// The large play button in a ring, as the centre of the controls. The compact strip rings
+/// it in the theme's accent.
 private struct PlayButton: View {
     let isPlaying: Bool
     var size: CGFloat = 52
+    var accentRing = false
     let action: () -> Void
     @State private var isHovering = false
 
@@ -207,7 +255,13 @@ private struct PlayButton: View {
                 .contentTransition(.symbolEffect(.replace))
                 .frame(width: size, height: size)
                 .background(Circle().fill(Color.white.opacity(isHovering ? 0.16 : 0.08)))
-                .overlay(Circle().strokeBorder(Color.white.opacity(0.14), lineWidth: 1))
+                .overlay {
+                    if accentRing {
+                        Circle().strokeBorder(.tint, lineWidth: 1.5)
+                    } else {
+                        Circle().strokeBorder(Color.white.opacity(0.14), lineWidth: 1)
+                    }
+                }
                 .contentShape(Circle())
         }
         .buttonStyle(.plain)
@@ -394,6 +448,67 @@ struct AppIconBadge: View {
             }
             .buttonStyle(.plain)
             .help("Uygulamayı aç")
+        }
+    }
+}
+
+/// Spotify's own volume, like the bar in Spotify: it leaves the Mac's volume alone. Read once
+/// when shown; while dragging, Spotify is told at most ten times a second.
+private struct SpotifyVolumeBar: View {
+    @State private var level: Double?
+    @State private var dragging: Double?
+    @State private var isHovering = false
+    @State private var lastSent = Date.distantPast
+
+    private static let green = Color(red: 0.11, green: 0.73, blue: 0.33)
+
+    var body: some View {
+        let value = dragging ?? level ?? 0
+        HStack(spacing: 6) {
+            Image(systemName: value == 0 ? "speaker.slash.fill" : value < 0.5 ? "speaker.wave.1.fill" : "speaker.wave.2.fill")
+                .font(.system(size: 9, weight: .semibold))
+                .foregroundStyle(Color.white.opacity(0.6))
+                .frame(width: 14)
+            GeometryReader { proxy in
+                ZStack(alignment: .leading) {
+                    Capsule().fill(Color.white.opacity(0.15))
+                    Capsule()
+                        .fill(isHovering || dragging != nil ? Self.green : Color.white.opacity(0.85))
+                        .frame(width: proxy.size.width * value)
+                }
+                .frame(height: dragging == nil ? 4 : 5)
+                .frame(maxHeight: .infinity)
+                .contentShape(Rectangle())
+                .gesture(
+                    DragGesture(minimumDistance: 0)
+                        .onChanged { drag in
+                            let fraction = min(max(drag.location.x / max(proxy.size.width, 1), 0), 1)
+                            dragging = fraction
+                            if Date().timeIntervalSince(lastSent) > 0.1 {
+                                lastSent = Date()
+                                PlayerScript.setVolume(Int((fraction * 100).rounded()), on: .spotify)
+                            }
+                        }
+                        .onEnded { drag in
+                            let fraction = min(max(drag.location.x / max(proxy.size.width, 1), 0), 1)
+                            dragging = nil
+                            level = fraction
+                            PlayerScript.setVolume(Int((fraction * 100).rounded()), on: .spotify)
+                        }
+                )
+            }
+            .frame(height: 12)
+            Text(verbatim: level == nil && dragging == nil ? "—" : String(localized: "%\(Int((value * 100).rounded()))"))
+                .font(.system(size: 10, weight: .medium).monospacedDigit())
+                .foregroundStyle(Color.white.opacity(0.6))
+                .frame(width: 30, alignment: .trailing)
+        }
+        .onHover { isHovering = $0 }
+        .help("Spotify'ın ses seviyesi")
+        .task {
+            if let volume = await PlayerScript.volume(of: .spotify) {
+                level = Double(volume) / 100
+            }
         }
     }
 }

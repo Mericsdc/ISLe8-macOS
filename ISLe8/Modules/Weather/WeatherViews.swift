@@ -1,10 +1,14 @@
 import SwiftUI
 
-/// Home's weather column: now in detail (feels like, humidity, wind, UV), the next five hours
-/// and the next five days.
+/// Home's weather column. Dashboard: now in detail (feels like, humidity, wind, UV), the next
+/// five hours and the next five days. Compact: now, beside five days at a time (an arrow
+/// shows the next five); a tap on a day puts its details in a line underneath. Minimal: the
+/// place, now, and today's high and low.
 struct WeatherColumn: View {
     @Environment(WeatherModule.self) private var weather
     @Environment(SettingsStore.self) private var settings
+    @State private var forecastPage = 0
+    @State private var pickedDay: Date?
 
     var body: some View {
         Group {
@@ -30,75 +34,161 @@ struct WeatherColumn: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
-        .padding(settings.homeStyle == .minimal ? 0 : (settings.homeStyle == .compact ? 10 : 12))
-        .padding(.horizontal, settings.homeStyle == .minimal ? 10 : 0)
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: settings.homeStyle == .minimal ? .leading : .topLeading)
-        .islandTile()
+        .padding(settings.homeStyle == .dashboard ? 12 : 0)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: settings.homeStyle == .dashboard ? .topLeading : .leading)
+        .homeColumn(settings.homeStyle)
         .onAppear { weather.refreshIfStale() }
     }
 
-    /// Minimal: the icon and the temperature; the place and sky are in the tooltip.
+    /// Minimal: the place over the icon and temperature, the sky and today's range beside.
     private func minimal(_ report: WeatherReport) -> some View {
-        HStack(spacing: 6) {
-            Image(systemName: WeatherCode.symbol(report.code, isDay: report.isDay))
-                .symbolRenderingMode(.multicolor)
-                .font(.system(size: 20))
-            Text(Self.degrees(report.temperature))
-                .font(.system(size: 20, weight: .semibold, design: .rounded))
-                .monospacedDigit()
-                .fixedSize()
-        }
-        .frame(maxWidth: .infinity)
-        .help("\(report.place) · \(WeatherCode.description(report.code))")
-    }
-
-    /// Compact: now, then the next three days.
-    private func compact(_ report: WeatherReport) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack(spacing: 4) {
-                Text(report.place)
-                    .font(.system(size: 12, weight: .semibold))
-                    .lineLimit(1)
-                Image(systemName: "location.fill")
-                    .font(.system(size: 7, weight: .semibold))
-                    .foregroundStyle(Color.white.opacity(0.5))
-            }
+        VStack(alignment: .leading, spacing: 1) {
+            place(report, size: 12)
             HStack(spacing: 6) {
                 Image(systemName: WeatherCode.symbol(report.code, isDay: report.isDay))
                     .symbolRenderingMode(.multicolor)
-                    .font(.system(size: 22))
+                    .font(.system(size: 20))
                 Text(Self.degrees(report.temperature))
-                    .font(.system(size: 28, weight: .semibold, design: .rounded))
+                    .font(.system(size: 24, weight: .semibold, design: .rounded))
                     .monospacedDigit()
-                Spacer(minLength: 0)
+                    .fixedSize()
+                Spacer(minLength: 4)
                 VStack(alignment: .trailing, spacing: 1) {
                     Text(WeatherCode.description(report.code))
-                        .lineLimit(1)
                     Text("Y \(Self.degrees(report.high))  D \(Self.degrees(report.low))")
                 }
                 .font(.system(size: 10))
                 .foregroundStyle(Color.white.opacity(0.6))
-            }
-            Rectangle()
-                .fill(Color.white.opacity(0.08))
-                .frame(height: 1)
-            ForEach(Array(report.days.prefix(3).enumerated()), id: \.element.id) { index, day in
-                HStack(spacing: 6) {
-                    Text(index == 0 ? String(localized: "Yarın") : day.date.formatted(.dateTime.weekday(.abbreviated)))
-                        .lineLimit(1)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    Image(systemName: WeatherCode.symbol(day.code, isDay: true))
-                        .symbolRenderingMode(.multicolor)
-                        .frame(width: 16)
-                    Text(Self.degrees(day.high))
-                        .frame(width: 26, alignment: .trailing)
-                    Text(Self.degrees(day.low))
-                        .foregroundStyle(Color.white.opacity(0.5))
-                        .frame(width: 26, alignment: .trailing)
-                }
-                .font(.system(size: 10.5).monospacedDigit())
+                .lineLimit(1)
             }
         }
+    }
+
+    /// Compact: now (temperature, place, sky), five days beside it, the picked day below.
+    private func compact(_ report: WeatherReport) -> some View {
+        let forecast = Self.forecast(report)
+        let pages = max((forecast.count + 4) / 5, 1)
+        let page = min(forecastPage, pages - 1)
+        let picked = forecast.first { $0.date == pickedDay } ?? forecast.first
+        return VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: 12) {
+                VStack(alignment: .leading, spacing: 2) {
+                    HStack(spacing: 6) {
+                        Image(systemName: WeatherCode.symbol(report.code, isDay: report.isDay))
+                            .symbolRenderingMode(.multicolor)
+                            .font(.system(size: 24))
+                        Text(Self.degrees(report.temperature))
+                            .font(.system(size: 30, weight: .semibold, design: .rounded))
+                            .monospacedDigit()
+                            .fixedSize()
+                    }
+                    place(report, size: 12)
+                    Text(WeatherCode.description(report.code))
+                        .font(.system(size: 11))
+                        .foregroundStyle(Color.white.opacity(0.55))
+                        .lineLimit(1)
+                }
+                .layoutPriority(1)
+                HStack(spacing: 0) {
+                    ForEach(forecast.dropFirst(page * 5).prefix(5)) { day in
+                        VStack(spacing: 4) {
+                            Text(day.label)
+                                .font(.system(size: 10))
+                                .foregroundStyle(Color.white.opacity(0.55))
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.8)
+                            Image(systemName: WeatherCode.symbol(day.code, isDay: true))
+                                .symbolRenderingMode(.multicolor)
+                                .font(.system(size: 15))
+                                .frame(height: 18)
+                            Text(Self.degrees(day.high))
+                                .font(.system(size: 11, weight: .semibold).monospacedDigit())
+                        }
+                        .padding(.vertical, 3)
+                        .frame(maxWidth: .infinity)
+                        .background(
+                            RoundedRectangle(cornerRadius: 7, style: .continuous)
+                                .fill(Color.white.opacity(day.date == picked?.date ? 0.1 : 0))
+                        )
+                        .contentShape(Rectangle())
+                        .onTapGesture { pickedDay = day.date }
+                    }
+                    if pages > 1 {
+                        let hasMore = page + 1 < pages
+                        Button {
+                            forecastPage = hasMore ? page + 1 : 0
+                        } label: {
+                            Image(systemName: hasMore ? "chevron.right" : "chevron.left")
+                                .font(.system(size: 10, weight: .semibold))
+                                .foregroundStyle(Color.white.opacity(0.6))
+                                .frame(width: 16, height: 44)
+                                .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+                        .help(hasMore ? "Sonraki günler" : "İlk günler")
+                    }
+                }
+            }
+            if let picked {
+                Text(Self.detail(picked))
+                    .font(.system(size: 10))
+                    .foregroundStyle(Color.white.opacity(0.6))
+                    .lineLimit(1)
+            }
+        }
+    }
+
+    /// "Cmt 31 Eki · Sağanak · Y 18°  D 12° · Yağış %70".
+    private static func detail(_ day: ForecastDay) -> String {
+        let calendar = Calendar.current
+        let name = calendar.isDateInToday(day.date) || calendar.isDateInTomorrow(day.date)
+            ? day.label
+            : day.date.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated))
+        var parts = [name, WeatherCode.description(day.code), String(localized: "Y \(degrees(day.high))  D \(degrees(day.low))")]
+        if let rain = day.rainChance {
+            parts.append(String(localized: "Yağış %\(rain)"))
+        }
+        return parts.joined(separator: " · ")
+    }
+
+    private func place(_ report: WeatherReport, size: CGFloat) -> some View {
+        HStack(spacing: 4) {
+            Text(report.place)
+                .font(.system(size: size, weight: .semibold))
+                .lineLimit(1)
+            Image(systemName: "location.fill")
+                .font(.system(size: size * 0.6, weight: .semibold))
+                .foregroundStyle(Color.white.opacity(0.5))
+        }
+    }
+
+    private struct ForecastDay: Identifiable {
+        let date: Date
+        let label: String
+        let code: Int
+        let high: Double
+        let low: Double
+        let rainChance: Int?
+        var id: Date { date }
+    }
+
+    /// Today, tomorrow, then the days after: ten in all, five to a page.
+    private static func forecast(_ report: WeatherReport) -> [ForecastDay] {
+        let today = ForecastDay(
+            date: Calendar.current.startOfDay(for: .now), label: String(localized: "Bugün"),
+            code: report.todayCode, high: report.high, low: report.low, rainChance: report.todayRainChance
+        )
+        let next = report.days.prefix(9).enumerated().map { index, day in
+            ForecastDay(
+                date: day.date,
+                label: index == 0 ? String(localized: "Yarın") : day.date.formatted(.dateTime.weekday(.abbreviated)),
+                code: day.code,
+                high: day.high,
+                low: day.low,
+                rainChance: day.rainChance
+            )
+        }
+        return [today] + next
     }
 
     private func content(_ report: WeatherReport) -> some View {

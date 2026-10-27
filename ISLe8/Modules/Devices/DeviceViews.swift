@@ -186,7 +186,8 @@ struct DevicesTab: View {
             ]))
         }
         for device in devices.devices {
-            cards.append(Card(id: device.id, title: device.shortName, subtitle: nil, cells: Self.cells(device)))
+            let subtitle = device.isCharging ? String(localized: "Şarj oluyor") : nil
+            cards.append(Card(id: device.id, title: device.shortName, subtitle: subtitle, cells: Self.cells(device)))
         }
         return cards
     }
@@ -196,7 +197,7 @@ struct DevicesTab: View {
         let pro = device.kind == .airPodsPro
         var cells: [BatteryCell] = []
         if let main = device.main {
-            cells.append(BatteryCell(id: "main", symbol: device.symbol, level: main, label: device.shortName))
+            cells.append(BatteryCell(id: "main", symbol: device.symbol, level: main, isCharging: device.isCharging, label: device.shortName))
         }
         if let left = device.left {
             cells.append(BatteryCell(id: "left", symbol: pro ? "airpodpro.left" : "airpod.left", level: left, label: String(localized: "Sol")))

@@ -27,8 +27,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let timer = TimerModule(settings: settings)
         let agents = AgentsModule(settings: settings)
         let usage = UsageModule()
-        let devices = DevicesModule()
-        var modules: [any IslandModule] = [media, shelf, clipboard, notifications, system, hud, calendar, weather, timer, agents, usage, devices]
+        let devices = DevicesModule(settings: settings)
+        let notes = NotesModule(folder: folder)
+        var modules: [any IslandModule] = [media, shelf, clipboard, notifications, system, hud, calendar, weather, timer, agents, usage, devices, notes]
         let palette = PaletteModule(modules: modules)
         modules.append(palette)
         let model = IslandModel(settings: settings, modules: modules)
@@ -48,8 +49,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         notifications.onShow = { [weak model] item in model?.showNotification(item) }
         notifications.isLocked = { [weak model] in model?.isLocked ?? false }
         hud.onHUD = { [weak model] value in model?.showHUD(value) }
+        let keyboardLockWindow = KeyboardLockWindow(system: system, settings: settings)
+        system.onKeyboardLockChange = { locked in
+            locked ? keyboardLockWindow.show() : keyboardLockWindow.hide()
+        }
         system.onBatteryEvent = { [weak model] event in
             model?.showAlert(.battery(event), for: .seconds(3))
+        }
+        system.onWiredChange = { [weak model] connected in
+            guard settings.showNetworkChip else { return }
+            model?.showAlert(.wired(connected), for: .seconds(3))
         }
         calendar.onMeetingSoon = { [weak model] item in
             model?.showAlert(.meeting(item), for: .seconds(10))
@@ -97,7 +106,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         island = IslandController(model: model)
-        statusItem = StatusItemController(onOpenSettings: { settingsWindow.show() })
+        statusItem = StatusItemController(settings: settings, onOpenSettings: { settingsWindow.show() })
         self.model = model
         self.settingsWindow = settingsWindow
         registerHotKeys()

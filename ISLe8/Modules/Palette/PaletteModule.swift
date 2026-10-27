@@ -170,6 +170,12 @@ final class PaletteModule: IslandModule {
                 icon: .symbol("cup.and.saucer.fill"),
                 keywords: ["kafein", "caffeinate", "uyku", "sleep"]
             ) { system.setKeepAwake(!system.isKeepingAwake) })
+            commands.append(PaletteCommand(
+                id: "clean-keyboard",
+                title: String(localized: "Klavyeyi temizle"),
+                icon: .symbol("keyboard"),
+                keywords: ["kilitle", "lock", "clean", "silmek"]
+            ) { system.lockKeyboard() })
         }
         if let shelf = module(ShelfModule.self), !shelf.store.items.isEmpty {
             commands += [

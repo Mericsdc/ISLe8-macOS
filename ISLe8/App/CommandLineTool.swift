@@ -5,7 +5,7 @@ import AppKit
 ///
 ///     isle8 hook claude|codex          agent hook; reads the hook's JSON on stdin
 ///     isle8 activity start|update|end  --id ID [--title T] [--subtitle S] [--progress 0.4] [--icon sf.symbol]
-///     isle8 open [home|shelf|clipboard|agents|devices]
+///     isle8 open [home|shelf|clipboard|notes|agents|devices|system]
 ///     isle8 close
 ///     isle8 devices
 ///     isle8 ping
@@ -50,7 +50,7 @@ nonisolated enum CommandLineTool {
           isle8 activity start --id ID --title "Başlık" [--subtitle "…"] [--progress 0.4] [--icon sf.symbol]
           isle8 activity update --id ID [--title …] [--subtitle …] [--progress …]
           isle8 activity end --id ID
-          isle8 open [home|shelf|clipboard|agents|devices]   Adayı açar
+          isle8 open [home|shelf|clipboard|notes|agents|devices|system]   Adayı açar
           isle8 close                     Adayı kapatır
           isle8 devices                   Bağlı kablosuz cihazlar ve pilleri
           isle8 ping                      ISLe8 çalışıyor mu?

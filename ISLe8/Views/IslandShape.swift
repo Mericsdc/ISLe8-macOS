@@ -42,3 +42,25 @@ nonisolated struct IslandShape: Shape {
         return path
     }
 }
+
+/// The island's outline at `size`, centred at the top of the rect it is drawn in. The island's
+/// views stay put in a fixed frame under the notch while this grows and shrinks around them.
+nonisolated struct CenteredIslandShape: Shape {
+    var size: CGSize
+    var shoulder: CGFloat
+    var bottomRadius: CGFloat
+
+    var animatableData: AnimatablePair<AnimatablePair<CGFloat, CGFloat>, AnimatablePair<CGFloat, CGFloat>> {
+        get { AnimatablePair(AnimatablePair(size.width, size.height), AnimatablePair(shoulder, bottomRadius)) }
+        set {
+            size = CGSize(width: newValue.first.first, height: newValue.first.second)
+            shoulder = newValue.second.first
+            bottomRadius = newValue.second.second
+        }
+    }
+
+    func path(in rect: CGRect) -> Path {
+        let island = CGRect(x: rect.midX - size.width / 2, y: rect.minY, width: size.width, height: size.height)
+        return IslandShape(shoulder: shoulder, bottomRadius: bottomRadius).path(in: island)
+    }
+}

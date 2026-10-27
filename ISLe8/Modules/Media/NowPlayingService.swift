@@ -66,6 +66,32 @@ final class NowPlayingService {
         showOptimistically(command)
     }
 
+    /// Play with nothing playing: opens `preferred`, else the player used last (Spotify if
+    /// installed, else Music), in the background and tells it to play, so it picks up where
+    /// it stopped. A player just launched ignores commands for a moment, so it is told twice.
+    func resume(preferring preferred: PlayerApp?) {
+        let installed = { (player: PlayerApp) in NSWorkspace.shared.urlForApplication(withBundleIdentifier: player.rawValue) != nil }
+        let remembered = UserDefaults.standard.string(forKey: Self.lastPlayerKey).flatMap(PlayerApp.init(rawValue:))
+        guard let player = [preferred, remembered, .spotify, .music].compactMap({ $0 }).first(where: installed),
+              let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: player.rawValue) else { return }
+        guard NSRunningApplication.runningApplications(withBundleIdentifier: player.rawValue).isEmpty else {
+            PlayerScript.run(.play, on: player)
+            return
+        }
+        let configuration = NSWorkspace.OpenConfiguration()
+        configuration.activates = false
+        NSWorkspace.shared.openApplication(at: url, configuration: configuration) { _, _ in
+            Task { @MainActor in
+                for delay in [1.5, 2.5] {
+                    try? await Task.sleep(for: .seconds(delay))
+                    PlayerScript.run(.play, on: player)
+                }
+            }
+        }
+    }
+
+    private static let lastPlayerKey = "lastPlayer"
+
     func seek(to time: TimeInterval) {
         if bridgeCommandsWork, bridgeStatus == .running {
             bridge.send("seek \(time)")
@@ -222,6 +248,10 @@ final class NowPlayingService {
     private func publish() {
         let merged = bridgeInfo ?? playerInfo
         reported = merged
+        if let merged, merged.isPlaying, let player = PlayerApp(rawValue: merged.bundleID ?? ""),
+           UserDefaults.standard.string(forKey: Self.lastPlayerKey) != player.rawValue {
+            UserDefaults.standard.set(player.rawValue, forKey: Self.lastPlayerKey)
+        }
         guard merged != info else { return }
         let old = info
         info = merged

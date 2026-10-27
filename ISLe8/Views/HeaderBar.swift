@@ -44,6 +44,18 @@ struct HeaderBar: View {
             if settings.showBatteryChip, let battery = system.battery {
                 BatteryChip(state: battery)
             }
+            if settings.showNetworkChip, system.network == .wired {
+                HStack(spacing: 4) {
+                    Image(systemName: "cable.connector.horizontal")
+                        .foregroundStyle(Color.green)
+                    Text(verbatim: "LAN")
+                }
+                .font(.system(size: 11, weight: .semibold))
+                .padding(.horizontal, 8)
+                .frame(height: 24)
+                .background(Capsule().fill(Color.white.opacity(0.07)))
+                .help("İnternete kabloyla (Ethernet) bağlı")
+            }
             if watts, settings.showBatteryChip, let watts = usage.adapterWatts {
                 HStack(spacing: 3) {
                     Image(systemName: "bolt.fill")
@@ -142,8 +154,10 @@ extension IslandTab {
         case .home: String(localized: "Home")
         case .shelf: String(localized: "Raf")
         case .clipboard: String(localized: "Pano")
+        case .notes: String(localized: "Notlar")
         case .agents: String(localized: "AI")
         case .devices: String(localized: "Cihazlar")
+        case .system: String(localized: "Sistem")
         case .palette: String(localized: "Komut")
         }
     }
@@ -153,8 +167,10 @@ extension IslandTab {
         case .home: "house.fill"
         case .shelf: "tray.full.fill"
         case .clipboard: "doc.on.clipboard.fill"
+        case .notes: "note.text"
         case .agents: "sparkles"
-        case .devices: "airpodspro"
+        case .devices: "macbook.and.iphone"
+        case .system: "gauge.with.dots.needle.50percent"
         case .palette: "command"
         }
     }

@@ -13,17 +13,25 @@ struct HUDAlertView: View {
                     .contentTransition(.symbolEffect(.replace))
                     .frame(width: IslandModel.hudEarWidth)
                 Spacer(minLength: notch.width)
-                GeometryReader { proxy in
-                    ZStack(alignment: .leading) {
-                        Capsule().fill(Color.white.opacity(0.2))
-                        Capsule()
-                            .fill(Color.white)
-                            .frame(width: proxy.size.width * shownLevel)
+                HStack(spacing: 6) {
+                    GeometryReader { proxy in
+                        ZStack(alignment: .leading) {
+                            Capsule().fill(Color.white.opacity(0.2))
+                            Capsule()
+                                .fill(Color.white)
+                                .frame(width: proxy.size.width * shownLevel)
+                        }
                     }
+                    .frame(height: 5)
+                    .animation(.easeOut(duration: 0.12), value: shownLevel)
+                    Text(shownLevel, format: .percent.precision(.fractionLength(0)))
+                        .font(.system(size: 11, weight: .semibold).monospacedDigit())
+                        .contentTransition(.numericText())
+                        .frame(width: 34, alignment: .trailing)
                 }
-                .frame(width: IslandModel.hudEarWidth - 22, height: 5)
+                .padding(.leading, 6)
+                .padding(.trailing, 12)
                 .frame(width: IslandModel.hudEarWidth)
-                .animation(.easeOut(duration: 0.12), value: shownLevel)
             }
             .frame(height: notch.height)
         }
@@ -70,7 +78,7 @@ struct BatteryAlertView: View {
     private var symbol: String {
         switch event {
         case .pluggedIn: "battery.100percent.bolt"
-        case .full: "battery.100percent"
+        case .unplugged: "battery.75percent"
         case .low: "battery.25percent"
         case .critical: "battery.0percent"
         }
@@ -78,7 +86,8 @@ struct BatteryAlertView: View {
 
     private var tint: Color {
         switch event {
-        case .pluggedIn, .full: .green
+        case .pluggedIn: .green
+        case .unplugged: .white
         case .low: .orange
         case .critical: .red
         }
@@ -87,7 +96,7 @@ struct BatteryAlertView: View {
     private var title: String {
         switch event {
         case .pluggedIn: String(localized: "Şarj oluyor")
-        case .full: String(localized: "Tam şarj oldu")
+        case .unplugged: String(localized: "Pilde")
         case .low: String(localized: "Pil azalıyor")
         case .critical: String(localized: "Pil çok az")
         }
@@ -95,8 +104,7 @@ struct BatteryAlertView: View {
 
     private var detail: String {
         switch event {
-        case .pluggedIn(let percent): "%\(percent)"
-        case .full: String(localized: "Şarj aletini çıkarabilirsin")
+        case .pluggedIn(let percent), .unplugged(let percent): "%\(percent)"
         case .low(let percent), .critical(let percent): String(localized: "%\(percent) kaldı · şarja tak")
         }
     }
@@ -158,5 +166,57 @@ struct BatteryChip: View {
         if state.percent <= 10 { return .red }
         if state.percent <= 20 { return .orange }
         return .white
+    }
+}
+
+/// Charging, or online by cable: the island widens beside the notch with a green symbol on
+/// the left and the figure on the right, the way an iPhone shows it is charging.
+struct StatusEarsView: View {
+    @Environment(IslandModel.self) private var model
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    let symbol: String
+    let text: String
+    let label: String
+    /// Green when something was plugged in, white when it was taken out.
+    var tint: Color = .green
+    @State private var isOut = false
+
+    var body: some View {
+        if let notch = model.geometry?.notchSize {
+            // Both sides slide out from under the notch with a little bounce, then the
+            // symbol pulses once.
+            HStack(spacing: 0) {
+                Image(systemName: symbol)
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(tint)
+                    .symbolEffect(.bounce, value: isOut)
+                    .frame(width: IslandModel.statusEarWidth)
+                    .offset(x: isOut ? 0 : IslandModel.statusEarWidth * 0.6)
+                    .scaleEffect(isOut ? 1 : 0.4)
+                    .opacity(isOut ? 1 : 0)
+                Spacer(minLength: notch.width)
+                Text(verbatim: text)
+                    .font(.system(size: 13, weight: .bold).monospacedDigit())
+                    .foregroundStyle(tint)
+                    .frame(width: IslandModel.statusEarWidth)
+                    .offset(x: isOut ? 0 : -IslandModel.statusEarWidth * 0.6)
+                    .scaleEffect(isOut ? 1 : 0.4)
+                    .opacity(isOut ? 1 : 0)
+            }
+            .frame(height: notch.height)
+            .onAppear {
+                withAnimation(reduceMotion ? .easeOut(duration: 0.15) : .spring(response: 0.45, dampingFraction: 0.6).delay(0.05)) {
+                    isOut = true
+                }
+            }
+            .onChange(of: model.isRetractingStatus) { _, retracting in
+                guard retracting else { return }
+                withAnimation(reduceMotion ? .easeIn(duration: 0.12) : .easeIn(duration: 0.22)) {
+                    isOut = false
+                }
+            }
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(Text(verbatim: "\(label) \(text)"))
+        }
     }
 }

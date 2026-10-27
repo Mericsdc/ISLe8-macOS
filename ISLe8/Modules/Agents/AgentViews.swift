@@ -61,35 +61,51 @@ struct ScriptActivityEar: View {
 /// agent status component; the usage rings sit below.
 struct AgentsTab: View {
     @Environment(AgentsModule.self) private var agents
+    @Environment(SettingsStore.self) private var settings
     @State private var followedID: String?
 
     var body: some View {
-        // The island has a fixed height; a busy AI tab scrolls inside it.
-        ScrollView(.vertical) {
-            content
+        // The island has a fixed height; a busy AI tab scrolls inside it. The strips are too
+        // short to stack the limits under the run, so they get a column of their own.
+        if settings.homeStyle == .dashboard {
+            ScrollView(.vertical) {
+                VStack(spacing: 8) {
+                    runs
+                    UsageStrip()
+                }
+            }
+            .scrollIndicators(.never)
+        } else {
+            HStack(alignment: .top, spacing: 10) {
+                ScrollView(.vertical) {
+                    VStack(spacing: 8) {
+                        runs
+                    }
+                }
+                .scrollIndicators(.never)
+                UsageStrip(stacked: true)
+                    .frame(width: 270)
+            }
         }
-        .scrollIndicators(.never)
     }
 
-    private var content: some View {
-        VStack(spacing: 8) {
-            if let approval = agents.approvals.first {
-                ApprovalCard(approval: approval)
+    @ViewBuilder
+    private var runs: some View {
+        if let approval = agents.approvals.first {
+            ApprovalCard(approval: approval)
+        }
+        if agents.sessions.isEmpty && agents.scriptActivities.isEmpty {
+            if agents.approvals.isEmpty { emptyState }
+        } else {
+            if agents.sessions.count > 1 {
+                SessionSwitcher(sessions: agents.sessions, selection: followed?.id) { followedID = $0 }
             }
-            if agents.sessions.isEmpty && agents.scriptActivities.isEmpty {
-                if agents.approvals.isEmpty { emptyState }
-            } else {
-                if agents.sessions.count > 1 {
-                    SessionSwitcher(sessions: agents.sessions, selection: followed?.id) { followedID = $0 }
-                }
-                if let session = followed {
-                    RunCard(session: session)
-                }
-                ForEach(agents.scriptActivities.prefix(agents.sessions.isEmpty ? 3 : 1)) { activity in
-                    ScriptActivityRow(activity: activity)
-                }
+            if let session = followed {
+                RunCard(session: session)
             }
-            UsageStrip()
+            ForEach(agents.scriptActivities.prefix(agents.sessions.isEmpty ? 3 : 1)) { activity in
+                ScriptActivityRow(activity: activity)
+            }
         }
     }
 

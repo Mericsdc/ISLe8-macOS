@@ -97,6 +97,22 @@
         }
       }
     },
+    "%@ boş": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ free"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ boş"
+          }
+        }
+      }
+    },
     "%@ haftalık": {
       "localizations": {
         "en": {
@@ -209,6 +225,22 @@
         }
       }
     },
+    "%@ · Etkinlik yok": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · No events"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · Etkinlik yok"
+          }
+        }
+      }
+    },
     "%@ · Y %lld° D %lld°": {
       "localizations": {
         "en": {
@@ -225,18 +257,18 @@
         }
       }
     },
-    "%@ · özel": {
+    "%@/sn": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ · custom"
+            "value": "%@/s"
           }
         },
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ · özel"
+            "value": "%@/sn"
           }
         }
       }
@@ -529,6 +561,22 @@
         }
       }
     },
+    "%lld çekirdek": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld cores"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld çekirdek"
+          }
+        }
+      }
+    },
     "%lld öğe": {
       "localizations": {
         "en": {
@@ -697,6 +745,22 @@
         }
       }
     },
+    "13–14 Şubat": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "13–14 February"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "13–14 Şubat"
+          }
+        }
+      }
+    },
     "14:30 Toplantı": {
       "localizations": {
         "en": {
@@ -725,6 +789,70 @@
           "stringUnit": {
             "state": "translated",
             "value": "15 dk"
+          }
+        }
+      }
+    },
+    "16–17 Mart": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "16–17 March"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "16–17 Mart"
+          }
+        }
+      }
+    },
+    "20–30 Aralık, 2–6 Ocak": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "20–30 December, 2–6 January"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "20–30 Aralık, 2–6 Ocak"
+          }
+        }
+      }
+    },
+    "24–31 Ekim": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "24–31 October"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "24–31 Ekim"
+          }
+        }
+      }
+    },
+    "31 Aralık – 1 Ocak": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "31 December – 1 January"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "31 Aralık – 1 Ocak"
           }
         }
       }
@@ -1177,6 +1305,38 @@
         }
       }
     },
+    "Ay Yeni Yılı": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lunar New Year"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ay Yeni Yılı"
+          }
+        }
+      }
+    },
+    "Ay Yeni Yılı'nın bir gün öncesinden iki gün sonrasına": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "From the day before Lunar New Year to two days after"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ay Yeni Yılı'nın bir gün öncesinden iki gün sonrasına"
+          }
+        }
+      }
+    },
     "Ayarlar": {
       "localizations": {
         "en": {
@@ -1241,18 +1401,18 @@
         }
       }
     },
-    "Aynı sütunlar, daha küçük: bugünün etkinlikleri, küçük oynatıcı, kısa hava; ~640 pt.": {
+    "Aziz Patrick Günü": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The same columns, smaller: today's events, a small player, short weather; ~640 pt."
+            "value": "St. Patrick's Day"
           }
         },
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Aynı sütunlar, daha küçük: bugünün etkinlikleri, küçük oynatıcı, kısa hava; ~640 pt."
+            "value": "Aziz Patrick Günü"
           }
         }
       }
@@ -1417,6 +1577,22 @@
         }
       }
     },
+    "Ağ": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Network"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ağ"
+          }
+        }
+      }
+    },
     "Aşağı taşı": {
       "localizations": {
         "en": {
@@ -1577,6 +1753,22 @@
         }
       }
     },
+    "Bellek": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Memory"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bellek"
+          }
+        }
+      }
+    },
     "Bildirim gönderen uygulamalar burada listelenir.": {
       "localizations": {
         "en": {
@@ -1721,6 +1913,22 @@
         }
       }
     },
+    "Bu Mac'e güvenen iPhone ve iPad'ler, Finder'ın onlara ulaştığı yolla okunur: kabloyla ya da Finder'da \"Wi-Fi'deyken bu iPhone'u göster\" açıkken aynı ağda. Yalnızca okunur, izin gerekmez.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "iPhones and iPads that trust this Mac, read the way Finder reaches them: by cable, or on the same network with \"Show this iPhone when on Wi-Fi\" on in Finder. Read-only; no permission needed."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bu Mac'e güvenen iPhone ve iPad'ler, Finder'ın onlara ulaştığı yolla okunur: kabloyla ya da Finder'da \"Wi-Fi'deyken bu iPhone'u göster\" açıkken aynı ağda. Yalnızca okunur, izin gerekmez."
+          }
+        }
+      }
+    },
     "Bu ekran bağlı değilken ada otomatik seçimle görünür.": {
       "localizations": {
         "en": {
@@ -1753,6 +1961,22 @@
         }
       }
     },
+    "Bugün": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Today"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bugün"
+          }
+        }
+      }
+    },
     "Bugün ve yarın için başka bir şey yok": {
       "localizations": {
         "en": {
@@ -1781,6 +2005,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "Bugün · %@"
+          }
+        }
+      }
+    },
+    "Bugün özel bir gün yok. Süsler yalnızca ada açıkken, içeriğin arkasında görünür.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No special day today. Decorations show only while the island is open, behind its content."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bugün özel bir gün yok. Süsler yalnızca ada açıkken, içeriğin arkasında görünür."
+          }
+        }
+      }
+    },
+    "Bugün: %@. Süsler yalnızca ada açıkken, içeriğin arkasında görünür.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Today: %@. Decorations show only while the island is open, behind its content."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bugün: %@. Süsler yalnızca ada açıkken, içeriğin arkasında görünür."
           }
         }
       }
@@ -1829,6 +2085,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Burada bekler; istediğin yere sürükleyip bırakabilir ya da AirDrop'la gönderebilirsin."
+          }
+        }
+      }
+    },
+    "Cadılar Bayramı": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Halloween"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cadılar Bayramı"
           }
         }
       }
@@ -2105,6 +2377,22 @@
         }
       }
     },
+    "Değişiklikler bu temaya kaydedilir; \"Varsayılana döndür\" ilk haline getirir.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Changes are saved to this theme; \"Restore default\" puts it back as it came."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Değişiklikler bu temaya kaydedilir; \"Varsayılana döndür\" ilk haline getirir."
+          }
+        }
+      }
+    },
     "Değiştirilemedi: %@": {
       "localizations": {
         "en": {
@@ -2149,6 +2437,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Dil değişince ISLe8 yeniden başlar."
+          }
+        }
+      }
+    },
+    "Disk": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Disk"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Disk"
           }
         }
       }
@@ -2297,6 +2601,22 @@
         }
       }
     },
+    "Düzenle": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Düzenle"
+          }
+        }
+      }
+    },
     "Düzenliyor: %@": {
       "localizations": {
         "en": {
@@ -2357,6 +2677,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "E-posta yaz"
+          }
+        }
+      }
+    },
+    "Ekle": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ekle"
           }
         }
       }
@@ -2453,6 +2789,38 @@
         }
       }
     },
+    "En çok işlemci kullananlar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Top CPU use"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En çok işlemci kullananlar"
+          }
+        }
+      }
+    },
+    "Erişilebilirlik izni yok. Sistem Ayarları > Gizlilik ve Güvenlik > Erişilebilirlik'ten ISLe8'i açıp yeniden dene.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No Accessibility permission. Turn ISLe8 on in System Settings > Privacy & Security > Accessibility and try again."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erişilebilirlik izni yok. Sistem Ayarları > Gizlilik ve Güvenlik > Erişilebilirlik'ten ISLe8'i açıp yeniden dene."
+          }
+        }
+      }
+    },
     "Erişilebilirlik izni yok; macOS'un göstergesi kullanılıyor.": {
       "localizations": {
         "en": {
@@ -2497,6 +2865,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Etkin ekran"
+          }
+        }
+      }
+    },
+    "Etkinlik Monitörü'nü aç": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open Activity Monitor"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Etkinlik Monitörü'nü aç"
           }
         }
       }
@@ -2965,22 +3349,6 @@
         }
       }
     },
-    "Hazır bir temayı değiştirdiğinde bir kopyası oluşur; aslı olduğu gibi kalır.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Changing a built-in theme makes a copy of it; the original stays as it is."
-          }
-        },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Hazır bir temayı değiştirdiğinde bir kopyası oluşur; aslı olduğu gibi kalır."
-          }
-        }
-      }
-    },
     "Henüz bir şey kopyalanmadı": {
       "localizations": {
         "en": {
@@ -2993,6 +3361,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Henüz bir şey kopyalanmadı"
+          }
+        }
+      }
+    },
+    "Henüz not yok. Yukarıya yaz, Enter'la ekle; bir nota tıklayınca kopyalanır.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No notes yet. Type above and press Return to add one; click a note to copy it."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Henüz not yok. Yukarıya yaz, Enter'la ekle; bir nota tıklayınca kopyalanır."
           }
         }
       }
@@ -3041,6 +3425,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Hissedilen %@"
+          }
+        }
+      }
+    },
+    "Hiçbir şey çalmıyorken oynat'a basınca arka planda açılır ve kaldığı yerden devam eder.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When nothing is playing, play opens it in the background and it resumes where it left off."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hiçbir şey çalmıyorken oynat'a basınca arka planda açılır ve kaldığı yerden devam eder."
           }
         }
       }
@@ -3153,6 +3553,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Hoparlör"
+          }
+        }
+      }
+    },
+    "Hücresel": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cellular"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hücresel"
           }
         }
       }
@@ -3301,6 +3717,38 @@
         }
       }
     },
+    "Kablo çıkarıldı": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cable unplugged"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kablo çıkarıldı"
+          }
+        }
+      }
+    },
+    "Kablolu bağlantı (LAN)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wired connection (LAN)"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kablolu bağlantı (LAN)"
+          }
+        }
+      }
+    },
     "Kablosuz cihazlar": {
       "localizations": {
         "en": {
@@ -3313,6 +3761,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kablosuz cihazlar"
+          }
+        }
+      }
+    },
+    "Kabloyla bağlandı": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connected by cable"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kabloyla bağlandı"
           }
         }
       }
@@ -3429,6 +3893,22 @@
         }
       }
     },
+    "Kapalıyken ayarlar adadaki ⚙ düğmesiyle ya da ISLe8'i yeniden açınca açılır.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When it's off, open Settings with the ⚙ button on the island or by opening ISLe8 again."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kapalıyken ayarlar adadaki ⚙ düğmesiyle ya da ISLe8'i yeniden açınca açılır."
+          }
+        }
+      }
+    },
     "Kapalıyken raf orijinal dosyayı gösterir; dosya taşınsa da bulunur.": {
       "localizations": {
         "en": {
@@ -3541,6 +4021,22 @@
         }
       }
     },
+    "Kartsız tek şerit: bu hafta, ortada oynatıcı, hava ve 5 gün; ~870 pt. Diğer sekmeler açılınca ada büyür.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "One flat strip: this week, the player in the middle, the weather and 5 days; ~870 pt. The island grows when another tab opens."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kartsız tek şerit: bu hafta, ortada oynatıcı, hava ve 5 gün; ~870 pt. Diğer sekmeler açılınca ada büyür."
+          }
+        }
+      }
+    },
     "Karışık çal": {
       "localizations": {
         "en": {
@@ -3589,6 +4085,22 @@
         }
       }
     },
+    "Kaydet": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kaydet"
+          }
+        }
+      }
+    },
     "Kestirmeyi çalıştır": {
       "localizations": {
         "en": {
@@ -3601,6 +4113,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kestirmeyi çalıştır"
+          }
+        }
+      }
+    },
+    "Kilidi aç": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unlock"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kilidi aç"
+          }
+        }
+      }
+    },
+    "Kilit %@ sonra kendiliğinden açılır": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unlocks by itself in %@"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kilit %@ sonra kendiliğinden açılır"
           }
         }
       }
@@ -3729,6 +4273,86 @@
           "stringUnit": {
             "state": "translated",
             "value": "Klavye"
+          }
+        }
+      }
+    },
+    "Klavye kilitli": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keyboard locked"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klavye kilitli"
+          }
+        }
+      }
+    },
+    "Klavye temizliği": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keyboard cleaning"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klavye temizliği"
+          }
+        }
+      }
+    },
+    "Klavyeyi iki dakikalığına kilitler; silerken tuşlar bir şey yazmaz. Fare ve trackpad çalışır, ekrandaki düğmeyle istediğin an açarsın. Erişilebilirlik izni gerekir.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Locks the keyboard for two minutes so the keys type nothing while you wipe it. The mouse and trackpad keep working; unlock any time with the button on screen. Needs Accessibility permission."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klavyeyi iki dakikalığına kilitler; silerken tuşlar bir şey yazmaz. Fare ve trackpad çalışır, ekrandaki düğmeyle istediğin an açarsın. Erişilebilirlik izni gerekir."
+          }
+        }
+      }
+    },
+    "Klavyeyi kilitle": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lock keyboard"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klavyeyi kilitle"
+          }
+        }
+      }
+    },
+    "Klavyeyi temizle": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clean the keyboard"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klavyeyi temizle"
           }
         }
       }
@@ -3873,6 +4497,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kopyaladıkların burada birikir. ⌃⌥V ile her yerden açılır."
+          }
+        }
+      }
+    },
+    "Kopyalamak için tıkla": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Click to copy"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopyalamak için tıkla"
+          }
+        }
+      }
+    },
+    "Kopyalandı": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copied"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopyalandı"
           }
         }
       }
@@ -4197,6 +4853,22 @@
         }
       }
     },
+    "Kış tatili": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Winter holidays"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kış tatili"
+          }
+        }
+      }
+    },
     "L": {
       "localizations": {
         "en": {
@@ -4405,6 +5077,22 @@
         }
       }
     },
+    "Menü çubuğunda simge": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Menu bar icon"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Menü çubuğunda simge"
+          }
+        }
+      }
+    },
     "Menü çubuğunun olduğu ekran (Sistem Ayarları > Ekranlar).": {
       "localizations": {
         "en": {
@@ -4485,6 +5173,22 @@
         }
       }
     },
+    "Müzik": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Music"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Müzik"
+          }
+        }
+      }
+    },
     "Müzik ve bildirim kartları, kilit ekranındaki saatin hemen altında durmalı. Kaydırıcıyı oynatınca kartlar 3 saniyeliğine masaüstünde önizlenir.": {
       "localizations": {
         "en": {
@@ -4533,6 +5237,22 @@
         }
       }
     },
+    "Not yaz, Enter'la ekle": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Write a note, press Return to add"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not yaz, Enter'la ekle"
+          }
+        }
+      }
+    },
     "Notch Black": {
       "localizations": {
         "en": {
@@ -4577,6 +5297,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "Notch'u olmayan ekranlarda (harici monitörler) adanın boyutu. Otomatik: 1080p'de ve \"1080p gibi görünen\" 4K'da %100, 2K'da %115, tam çözünürlükte 4K'da %125–130. Ada ekrandan geniş olmaz. MacBook'un kendi ekranında ada notch'un boyutundadır."
+          }
+        }
+      }
+    },
+    "Notlar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notes"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notlar"
+          }
+        }
+      }
+    },
+    "Notu düzenle": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit the note"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notu düzenle"
           }
         }
       }
@@ -4721,22 +5473,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Otomatik"
-          }
-        }
-      }
-    },
-    "Otomatik parlaklığın yavaş ayarları gösterilmez.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Automatic brightness's slow changes aren't shown."
-          }
-        },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Otomatik parlaklığın yavaş ayarları gösterilmez."
           }
         }
       }
@@ -4961,6 +5697,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "Parçalı bulutlu"
+          }
+        }
+      }
+    },
+    "Paskalya": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Easter"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paskalya"
+          }
+        }
+      }
+    },
+    "Paskalya'dan önceki cumadan pazara": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Good Friday to Easter Sunday"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paskalya'dan önceki cumadan pazara"
           }
         }
       }
@@ -5669,6 +6437,22 @@
         }
       }
     },
+    "Sevgililer Günü": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Valentine's Day"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sevgililer Günü"
+          }
+        }
+      }
+    },
     "Sil": {
       "localizations": {
         "en": {
@@ -5845,6 +6629,22 @@
         }
       }
     },
+    "Son kullanılan": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Last used"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Son kullanılan"
+          }
+        }
+      }
+    },
     "Sonraki": {
       "localizations": {
         "en": {
@@ -5877,6 +6677,38 @@
         }
       }
     },
+    "Sonraki günler": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next days"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sonraki günler"
+          }
+        }
+      }
+    },
+    "Sonraki hafta": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next week"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sonraki hafta"
+          }
+        }
+      }
+    },
     "Sonraki şarkı": {
       "localizations": {
         "en": {
@@ -5905,6 +6737,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Sonuç yok"
+          }
+        }
+      }
+    },
+    "Spotify'ın ses seviyesi": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spotify's volume"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spotify'ın ses seviyesi"
           }
         }
       }
@@ -6181,22 +7029,6 @@
         }
       }
     },
-    "Tam şarj oldu": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fully charged"
-          }
-        },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tam şarj oldu"
-          }
-        }
-      }
-    },
     "Tarayıcıda aç": {
       "localizations": {
         "en": {
@@ -6229,18 +7061,18 @@
         }
       }
     },
-    "Tek ince şerit: şarkı ve kontroller, hava, sıradaki etkinlik; ~600 pt. Diğer sekmeler açılınca ada büyür.": {
+    "Tek ince satır: sıradaki etkinlik, ortada şarkı ve kontroller, şehir ve hava; ~720 pt. Diğer sekmeler açılınca ada büyür.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "A single slim strip: the song and its controls, the weather, the next event; ~600 pt. The island grows when another tab opens."
+            "value": "A single slim row: the next event, the song and its controls in the middle, the city and weather; ~720 pt. The island grows when another tab opens."
           }
         },
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tek ince şerit: şarkı ve kontroller, hava, sıradaki etkinlik; ~600 pt. Diğer sekmeler açılınca ada büyür."
+            "value": "Tek ince satır: sıradaki etkinlik, ortada şarkı ve kontroller, şehir ve hava; ~720 pt. Diğer sekmeler açılınca ada büyür."
           }
         }
       }
@@ -6421,6 +7253,22 @@
         }
       }
     },
+    "Tuşlara basmak bir şey yazmaz; gönül rahatlığıyla silebilirsin.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pressing keys types nothing, so wipe away."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tuşlara basmak bir şey yazmaz; gönül rahatlığıyla silebilirsin."
+          }
+        }
+      }
+    },
     "Tüm ayarlar tek bir JSON dosyasına yazılır; başka bir Mac'e taşıyabilir ya da saklayabilirsin. İçe aktarınca ISLe8 yeniden başlar.": {
       "localizations": {
         "en": {
@@ -6597,6 +7445,38 @@
         }
       }
     },
+    "Varsayılan müzik uygulaması": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Default music app"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Varsayılan müzik uygulaması"
+          }
+        }
+      }
+    },
+    "Varsayılana döndür": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restore default"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Varsayılana döndür"
+          }
+        }
+      }
+    },
     "Vazgeç": {
       "localizations": {
         "en": {
@@ -6705,6 +7585,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Y %@  D %@"
+          }
+        }
+      }
+    },
+    "Yalnızca parlaklık tuşlarıyla yapılan değişiklikler; otomatik parlaklık ve ekranın kararması gösterilmez.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Only changes made with the brightness keys; automatic brightness and the screen dimming are not shown."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yalnızca parlaklık tuşlarıyla yapılan değişiklikler; otomatik parlaklık ve ekranın kararması gösterilmez."
           }
         }
       }
@@ -6837,6 +7733,22 @@
         }
       }
     },
+    "Yağış %%%lld": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rain %lld%%"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yağış %%%lld"
+          }
+        }
+      }
+    },
     "Yenile": {
       "localizations": {
         "en": {
@@ -6913,6 +7825,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Yön"
+          }
+        }
+      }
+    },
+    "Yılbaşı": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New Year"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yılbaşı"
           }
         }
       }
@@ -7013,6 +7941,22 @@
         }
       }
     },
+    "iPhone ve iPad pilleri": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "iPhone and iPad batteries"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "iPhone ve iPad pilleri"
+          }
+        }
+      }
+    },
     "isle8 activity end --id derleme": {
       "localizations": {
         "en": {
@@ -7045,18 +7989,18 @@
         }
       }
     },
-    "isle8 — ISLe8'e komut satırından ulaşır.\n\n  isle8 hook claude|codex         Claude Code / Codex hook'u (girdi stdin'den JSON)\n  isle8 activity start --id ID --title \"Başlık\" [--subtitle \"…\"] [--progress 0.4] [--icon sf.symbol]\n  isle8 activity update --id ID [--title …] [--subtitle …] [--progress …]\n  isle8 activity end --id ID\n  isle8 open [home|shelf|clipboard|agents|devices]   Adayı açar\n  isle8 close                     Adayı kapatır\n  isle8 devices                   Bağlı kablosuz cihazlar ve pilleri\n  isle8 ping                      ISLe8 çalışıyor mu?": {
+    "isle8 — ISLe8'e komut satırından ulaşır.\n\n  isle8 hook claude|codex         Claude Code / Codex hook'u (girdi stdin'den JSON)\n  isle8 activity start --id ID --title \"Başlık\" [--subtitle \"…\"] [--progress 0.4] [--icon sf.symbol]\n  isle8 activity update --id ID [--title …] [--subtitle …] [--progress …]\n  isle8 activity end --id ID\n  isle8 open [home|shelf|clipboard|notes|agents|devices|system]   Adayı açar\n  isle8 close                     Adayı kapatır\n  isle8 devices                   Bağlı kablosuz cihazlar ve pilleri\n  isle8 ping                      ISLe8 çalışıyor mu?": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "isle8 — talks to ISLe8 from the command line.\n\n  isle8 hook claude|codex         Claude Code / Codex hook (JSON input on stdin)\n  isle8 activity start --id ID --title \"Title\" [--subtitle \"…\"] [--progress 0.4] [--icon sf.symbol]\n  isle8 activity update --id ID [--title …] [--subtitle …] [--progress …]\n  isle8 activity end --id ID\n  isle8 open [home|shelf|clipboard|agents|devices]   Opens the island\n  isle8 close                     Closes the island\n  isle8 devices                   Connected wireless devices and their batteries\n  isle8 ping                      Is ISLe8 running?"
+            "value": "isle8 — talks to ISLe8 from the command line.\n\n  isle8 hook claude|codex         Claude Code / Codex hook (JSON input on stdin)\n  isle8 activity start --id ID --title \"Title\" [--subtitle \"…\"] [--progress 0.4] [--icon sf.symbol]\n  isle8 activity update --id ID [--title …] [--subtitle …] [--progress …]\n  isle8 activity end --id ID\n  isle8 open [home|shelf|clipboard|notes|agents|devices|system]   Opens the island\n  isle8 close                     Closes the island\n  isle8 devices                   Connected wireless devices and their batteries\n  isle8 ping                      Is ISLe8 running?"
           }
         },
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "isle8 — ISLe8'e komut satırından ulaşır.\n\n  isle8 hook claude|codex         Claude Code / Codex hook'u (girdi stdin'den JSON)\n  isle8 activity start --id ID --title \"Başlık\" [--subtitle \"…\"] [--progress 0.4] [--icon sf.symbol]\n  isle8 activity update --id ID [--title …] [--subtitle …] [--progress …]\n  isle8 activity end --id ID\n  isle8 open [home|shelf|clipboard|agents|devices]   Adayı açar\n  isle8 close                     Adayı kapatır\n  isle8 devices                   Bağlı kablosuz cihazlar ve pilleri\n  isle8 ping                      ISLe8 çalışıyor mu?"
+            "value": "isle8 — ISLe8'e komut satırından ulaşır.\n\n  isle8 hook claude|codex         Claude Code / Codex hook'u (girdi stdin'den JSON)\n  isle8 activity start --id ID --title \"Başlık\" [--subtitle \"…\"] [--progress 0.4] [--icon sf.symbol]\n  isle8 activity update --id ID [--title …] [--subtitle …] [--progress …]\n  isle8 activity end --id ID\n  isle8 open [home|shelf|clipboard|notes|agents|devices|system]   Adayı açar\n  isle8 close                     Adayı kapatır\n  isle8 devices                   Bağlı kablosuz cihazlar ve pilleri\n  isle8 ping                      ISLe8 çalışıyor mu?"
           }
         }
       }
@@ -7237,6 +8181,22 @@
         }
       }
     },
+    "Çevrimdışı": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Offline"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Çevrimdışı"
+          }
+        }
+      }
+    },
     "Çiseliyor": {
       "localizations": {
         "en": {
@@ -7285,6 +8245,22 @@
         }
       }
     },
+    "Ölçülüyor…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Measuring…"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ölçülüyor…"
+          }
+        }
+      }
+    },
     "Önceki": {
       "localizations": {
         "en": {
@@ -7317,6 +8293,22 @@
         }
       }
     },
+    "Önceki hafta": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Previous week"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Önceki hafta"
+          }
+        }
+      }
+    },
     "Önceki şarkı": {
       "localizations": {
         "en": {
@@ -7345,6 +8337,54 @@
           "stringUnit": {
             "state": "translated",
             "value": "Önizle"
+          }
+        }
+      }
+    },
+    "Önizleme yok": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No preview"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Önizleme yok"
+          }
+        }
+      }
+    },
+    "Özel gün süslemeleri": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Special day decorations"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Özel gün süslemeleri"
+          }
+        }
+      }
+    },
+    "Özel günler": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Special days"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Özel günler"
           }
         }
       }
@@ -7429,6 +8469,22 @@
         }
       }
     },
+    "İlk günler": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "First days"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "İlk günler"
+          }
+        }
+      }
+    },
     "İndirilenler klasörünü izler. macOS ilk seferde klasöre erişim izni isteyebilir.": {
       "localizations": {
         "en": {
@@ -7441,6 +8497,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "İndirilenler klasörünü izler. macOS ilk seferde klasöre erişim izni isteyebilir."
+          }
+        }
+      }
+    },
+    "İnternete kabloyla (Ethernet) bağlı": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Online through an Ethernet cable"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "İnternete kabloyla (Ethernet) bağlı"
           }
         }
       }
@@ -7525,18 +8597,18 @@
         }
       }
     },
-    "Şarj aletini çıkarabilirsin": {
+    "İşlemci": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "You can unplug the charger"
+            "value": "CPU"
           }
         },
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Şarj aletini çıkarabilirsin"
+            "value": "İşlemci"
           }
         }
       }
@@ -7589,18 +8661,18 @@
         }
       }
     },
-    "Şarja takınca, tam dolunca ve pil %20 ile %10'a inince.": {
+    "Şarja takınca, çıkarınca ve pil %20 ile %10'a inince.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "When plugged in, when full, and when the battery drops to 20% and 10%."
+            "value": "When plugged in, unplugged, and when the battery drops to 20% and 10%."
           }
         },
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Şarja takınca, tam dolunca ve pil %20 ile %10'a inince."
+            "value": "Şarja takınca, çıkarınca ve pil %20 ile %10'a inince."
           }
         }
       }

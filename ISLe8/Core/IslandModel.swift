@@ -30,14 +30,18 @@ enum IslandAlert: Equatable {
     case usageLimit(UsageSnapshot, UsageWindow)
     case deviceConnected(WirelessDevice)
     case deviceLowBattery(WirelessDevice)
+    /// An Ethernet cable came (true) or went (false).
+    case wired(Bool)
 }
 
 enum IslandTab: String, Hashable, CaseIterable {
     case home
     case shelf
     case clipboard
+    case notes
     case agents
     case devices
+    case system
     /// The ⌘K command palette; opened by its shortcut, never shown among the tabs.
     case palette
 }
@@ -58,8 +62,10 @@ struct NotchGeometry: Equatable {
 @Observable
 final class IslandModel {
     static let earWidth: CGFloat = 40
-    /// Wider ears for volume and brightness, so the level bar has room.
-    static let hudEarWidth: CGFloat = 70
+    /// Wider ears for volume and brightness, so the level bar and its percentage have room.
+    static let hudEarWidth: CGFloat = 92
+    /// Ears for "charging" and "LAN": the island widens sideways to say it, as on iPhone.
+    static let statusEarWidth: CGFloat = 104
     /// Reopening within this time returns to the tab you left; later it starts at Home.
     private static let tabMemory: TimeInterval = 15
 
@@ -71,6 +77,18 @@ final class IslandModel {
     private(set) var isPinned = false
     /// Whether the last change made the island bigger. Growing and shrinking use different springs.
     private(set) var isGrowing = true
+    /// A charging or cable banner is folding its ears back under the notch before it closes.
+    private(set) var isRetractingStatus = false
+    /// The next shrink is a status banner's: it springs back as it sprang out.
+    @ObservationIgnored private var softClose = false
+
+    /// Charging, unplugged, or a cable in or out: the banners that open sideways.
+    var isStatusAlert: Bool {
+        switch alert {
+        case .battery(.pluggedIn), .battery(.unplugged), .wired: true
+        default: false
+        }
+    }
     private(set) var tab: IslandTab = .home
     /// Set when the clipboard shortcut opens the island, so the search field takes the keyboard.
     private(set) var wantsSearchFocus = false
@@ -131,27 +149,27 @@ final class IslandModel {
         return tabs.isEmpty ? [.home] : tabs
     }
 
-    /// One height for every tab. Switching tabs then only swaps the content: the island and
-    /// its dock stay where they are, so the pointer resting on the dock stays inside and the
-    /// island doesn't close under it. Sized for Home's calendar, media and weather columns.
-    /// The open island's width, by Home style.
+    /// The open island's width, by Home style. The two strips are as wide as their columns
+    /// need, plus the shoulders (10 pt each) and the content's side padding (14 pt each).
     var expandedWidth: CGFloat {
         let notch = geometry?.notchSize.width ?? 185
+        let strip = HomeStrip.width(settings.homeTiles, style: settings.homeStyle) + 48
         switch settings.homeStyle {
         case .dashboard: return max(settings.expandedWidth, notch + 480)
-        case .compact: return max(640, notch + 400)
-        case .minimal: return max(600, notch + 380)
+        case .compact: return max(strip, notch + 440, 640)
+        case .minimal: return max(strip, notch + 400, 600)
         }
     }
 
-    /// Content height between the header and the dock. Within the dashboard and compact
-    /// styles every tab has the same height, so switching tabs never resizes the island;
-    /// minimal Home is a single strip and the other tabs need more room than that.
+    /// Content height between the header and the dock. On the dashboard every tab has the
+    /// same height, so switching tabs never resizes the island. Compact and minimal Home are
+    /// strips, and the other tabs need more room than that; the hover slack keeps the island
+    /// open while it shrinks back to Home.
     func contentHeight(for tab: IslandTab) -> CGFloat {
         if tab == .palette { return 280 }
         switch settings.homeStyle {
         case .dashboard: return 304
-        case .compact: return 196
+        case .compact: return tab == .home ? 100 : 196
         case .minimal: return tab == .home ? 64 : 196
         }
     }
@@ -182,6 +200,14 @@ final class IslandModel {
             return .easeInOut(duration: 0.16)
         }
         let speed = min(max(settings.animationSpeed, 0.5), 2)
+        // Plugging in or out: the island springs out sideways with a visible bounce, and
+        // back in the same way.
+        if state == .alert, isStatusAlert {
+            return .spring(response: 0.42 / speed, dampingFraction: 0.6)
+        }
+        if softClose {
+            return .spring(response: 0.45 / speed, dampingFraction: 0.72)
+        }
         return isGrowing
             ? .spring(response: 0.34 / speed, dampingFraction: 0.78)
             : .spring(response: 0.28 / speed, dampingFraction: 0.95)
@@ -221,6 +247,8 @@ final class IslandModel {
                 return compact
             case .hud:
                 return CGSize(width: notch.width + 2 * Self.hudEarWidth + 2 * shoulder(for: .compact), height: notch.height)
+            case .battery(.pluggedIn), .battery(.unplugged), .wired:
+                return CGSize(width: notch.width + 2 * Self.statusEarWidth + 2 * shoulder(for: .compact), height: notch.height)
             case .nowPlaying, .airDropReceived, .battery, .timer, .usageLimit, nil:
                 return CGSize(width: max(compact.width + 60, 340), height: notch.height + 46)
             }
@@ -525,7 +553,19 @@ final class IslandModel {
         alertTask = Task {
             try? await Task.sleep(for: duration)
             guard !Task.isCancelled, self.state == .alert else { return }
-            self.transition(to: self.restingState)
+            if self.isStatusAlert {
+                // The ears slide back under the notch first, then the island folds in.
+                self.isRetractingStatus = true
+                try? await Task.sleep(for: .milliseconds(240))
+                self.isRetractingStatus = false
+                guard !Task.isCancelled, self.state == .alert else { return }
+                self.softClose = true
+                self.transition(to: self.restingState)
+                try? await Task.sleep(for: .milliseconds(700))
+                self.softClose = false
+            } else {
+                self.transition(to: self.restingState)
+            }
         }
     }
 

@@ -1,25 +1,28 @@
 import SwiftUI
 
-/// Home's calendar column: the month with a dot on days that have events, and the events of
-/// the day picked in it (today to begin with). "+" adds an event to that day in a line:
-/// "14:30 Toplantı".
+/// Home's calendar column. Dashboard: the month with a dot on days that have events, and the
+/// events of the day picked in it (today to begin with); "+" adds an event to that day in a
+/// line: "14:30 Toplantı". Compact: this week in the same look; a tap on a day puts its
+/// events in a line underneath. Minimal: the next thing coming up.
 struct CalendarColumn: View {
     @Environment(CalendarModule.self) private var calendar
     @Environment(IslandModel.self) private var model
     @Environment(SettingsStore.self) private var settings
     @State private var month = CalendarColumn.monthStart(of: .now)
+    @State private var week = CalendarColumn.weekStart(of: .now)
     @State private var selected = Calendar.current.startOfDay(for: .now)
     @State private var dots: [Date: String] = [:]
     @State private var dayEvents: [DayEvent] = []
+    @State private var weekEvents: [Date: [DayEvent]] = [:]
     @State private var isAdding = false
     @State private var draft = ""
     @FocusState private var isDraftFocused: Bool
 
     var body: some View {
-        if settings.homeStyle == .minimal {
-            minimal
-        } else {
-            full
+        switch settings.homeStyle {
+        case .dashboard: full
+        case .compact: weekStrip
+        case .minimal: minimal
         }
     }
 
@@ -45,11 +48,16 @@ struct CalendarColumn: View {
                     }
                 } else {
                     Image(systemName: "calendar")
+                        .font(.system(size: 15))
                         .foregroundStyle(.tint)
-                    Text("Etkinlik yok")
-                        .font(.system(size: 11))
-                        .foregroundStyle(Color.white.opacity(0.55))
-                        .lineLimit(1)
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text(Date.now, format: .dateTime.day().month(.wide).weekday(.wide))
+                            .font(.system(size: 12, weight: .semibold))
+                        Text("Etkinlik yok")
+                            .font(.system(size: 10))
+                            .foregroundStyle(Color.white.opacity(0.55))
+                    }
+                    .lineLimit(1)
                 }
             case .notDetermined:
                 PillButton(title: "Takvimi bağla", systemImage: "calendar") { calendar.requestAccess() }
@@ -59,23 +67,48 @@ struct CalendarColumn: View {
             }
             Spacer(minLength: 0)
         }
-        .padding(.horizontal, 10)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .islandTile()
     }
 
-    /// Dashboard: the month and the picked day. Compact: the day alone.
+    /// Compact: the week in the month grid's look, under the month it falls in, and the
+    /// picked day's events in a line below.
+    private var weekStrip: some View {
+        VStack(alignment: .leading, spacing: 5) {
+            switch calendar.access {
+            case .granted:
+                let middle = Calendar.current.date(byAdding: .day, value: 3, to: week) ?? week
+                header(showing: middle, size: 15, step: shiftWeek, previous: "Önceki hafta", next: "Sonraki hafta")
+                WeekRow(start: week, month: middle, selected: selected, dots: dots, events: weekEvents) { selected = $0 }
+                Text(daySummary)
+                    .font(.system(size: 10))
+                    .foregroundStyle(Color.white.opacity(0.6))
+                    .lineLimit(1)
+                    .padding(.top, 3)
+            case .notDetermined:
+                Text("Toplantılarını burada gör")
+                    .font(.system(size: 11, weight: .semibold))
+                PillButton(title: "Takvimi bağla", systemImage: "calendar") { calendar.requestAccess() }
+            case .denied:
+                Text("Takvim erişimi kapalı. Sistem Ayarları > Gizlilik ve Güvenlik > Takvimler'den ISLe8'e izin ver.")
+                    .font(.system(size: 10))
+                    .foregroundStyle(Color.white.opacity(0.55))
+                    .lineLimit(4)
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+        .task(id: "\(week.timeIntervalSince1970)|\(calendar.revision)") { reloadWeek() }
+    }
+
+    /// Dashboard: the month and the picked day.
     private var full: some View {
         VStack(alignment: .leading, spacing: 8) {
             switch calendar.access {
             case .granted:
-                if settings.homeStyle == .dashboard {
-                    header
-                    MonthGrid(month: month, selected: selected, dots: dots) { selected = $0 }
-                    Rectangle()
-                        .fill(Color.white.opacity(0.08))
-                        .frame(height: 1)
-                }
+                header(showing: month, size: 15, step: shiftMonth, previous: "Önceki ay", next: "Sonraki ay")
+                MonthGrid(month: month, selected: selected, dots: dots) { selected = $0 }
+                Rectangle()
+                    .fill(Color.white.opacity(0.08))
+                    .frame(height: 1)
                 dayList
             case .notDetermined:
                 Spacer(minLength: 0)
@@ -94,31 +127,40 @@ struct CalendarColumn: View {
                 Spacer(minLength: 0)
             }
         }
-        .padding(settings.homeStyle == .dashboard ? 12 : 10)
+        .padding(12)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .islandTile()
         .task(id: "\(month.timeIntervalSince1970)|\(selected.timeIntervalSince1970)|\(calendar.revision)") { reload() }
     }
 
-    private var header: some View {
+    /// "Ekim 2026" (a click goes back to today) and the arrows that page by month or week.
+    private func header(
+        showing date: Date,
+        size: CGFloat,
+        step: @escaping (Int) -> Void,
+        previous: LocalizedStringKey,
+        next: LocalizedStringKey
+    ) -> some View {
         HStack(spacing: 4) {
             Button {
                 month = Self.monthStart(of: .now)
+                week = Self.weekStart(of: .now)
                 selected = Calendar.current.startOfDay(for: .now)
             } label: {
                 HStack(spacing: 5) {
-                    Text(month, format: .dateTime.month(.wide))
-                        .font(.system(size: 15, weight: .semibold))
-                    Text(month, format: .dateTime.year())
-                        .font(.system(size: 15))
+                    Text(date, format: .dateTime.month(.wide))
+                        .font(.system(size: size, weight: .semibold))
+                    Text(date, format: .dateTime.year())
+                        .font(.system(size: size))
                         .foregroundStyle(Color.white.opacity(0.5))
                 }
+                .lineLimit(1)
             }
             .buttonStyle(.plain)
             .help("Bugüne dön")
             Spacer(minLength: 0)
-            MonthArrow(systemImage: "chevron.left", help: "Önceki ay") { shiftMonth(-1) }
-            MonthArrow(systemImage: "chevron.right", help: "Sonraki ay") { shiftMonth(1) }
+            MonthArrow(systemImage: "chevron.left", help: previous) { step(-1) }
+            MonthArrow(systemImage: "chevron.right", help: next) { step(1) }
         }
     }
 
@@ -188,6 +230,23 @@ struct CalendarColumn: View {
         }
     }
 
+    private func shiftWeek(_ step: Int) {
+        let calendar = Calendar.current
+        week = calendar.date(byAdding: .weekOfYear, value: step, to: week) ?? week
+        // The pick moves along to the same weekday.
+        selected = calendar.date(byAdding: .weekOfYear, value: step, to: selected) ?? selected
+    }
+
+    /// "Per 29 · 14:00 Toplantı +1", or that the day is free.
+    private var daySummary: String {
+        let day = selected.formatted(.dateTime.weekday(.abbreviated).day())
+        let events = weekEvents[selected] ?? []
+        guard let first = events.first else { return String(localized: "\(day) · Etkinlik yok") }
+        let time = first.isAllDay ? String(localized: "Tüm gün") : first.start.formatted(date: .omitted, time: .shortened)
+        let more = events.count > 1 ? " +\(events.count - 1)" : ""
+        return "\(day) · \(time) \(first.title)\(more)"
+    }
+
     private func addDraft() {
         if calendar.addEvent(draft, on: selected) {
             draft = ""
@@ -199,6 +258,17 @@ struct CalendarColumn: View {
         let range = MonthGrid.visibleRange(for: month)
         dots = calendar.eventDays(from: range.start, to: range.end)
         dayEvents = calendar.events(on: selected)
+    }
+
+    private func reloadWeek() {
+        let days = WeekRow.days(from: week)
+        guard let end = Calendar.current.date(byAdding: .day, value: 7, to: week) else { return }
+        dots = calendar.eventDays(from: week, to: end)
+        weekEvents = Dictionary(uniqueKeysWithValues: days.map { ($0, calendar.events(on: $0)) })
+    }
+
+    static func weekStart(of date: Date) -> Date {
+        Calendar.current.dateInterval(of: .weekOfYear, for: date)?.start ?? Calendar.current.startOfDay(for: date)
     }
 
     static func monthStart(of date: Date) -> Date {
@@ -236,7 +306,8 @@ private struct MonthGrid: View {
     var body: some View {
         let days = Self.days(for: month)
         let calendar = Calendar.current
-        VStack(spacing: 2) {
+        // Room under each row for the event dot, clear of a ring or the today circle.
+        VStack(spacing: 4) {
             HStack(spacing: 0) {
                 ForEach(Self.weekdaySymbols, id: \.self) { symbol in
                     Text(symbol)
@@ -293,12 +364,66 @@ private struct MonthGrid: View {
     }
 }
 
+/// One week in the month grid's look, for the compact strip. Hovering a day lists its
+/// events; a tap picks it.
+private struct WeekRow: View {
+    let start: Date
+    /// The month in the header; days outside it are dimmed.
+    let month: Date
+    let selected: Date
+    let dots: [Date: String]
+    let events: [Date: [DayEvent]]
+    let select: (Date) -> Void
+
+    var body: some View {
+        let calendar = Calendar.current
+        VStack(spacing: 4) {
+            HStack(spacing: 0) {
+                ForEach(MonthGrid.weekdaySymbols, id: \.self) { symbol in
+                    Text(symbol)
+                        .font(.system(size: 10.5, weight: .medium))
+                        .foregroundStyle(Color.white.opacity(0.45))
+                        .frame(maxWidth: .infinity)
+                }
+            }
+            HStack(spacing: 0) {
+                ForEach(Self.days(from: start), id: \.self) { day in
+                    DayCell(
+                        day: day,
+                        isInMonth: calendar.isDate(day, equalTo: month, toGranularity: .month),
+                        isToday: calendar.isDateInToday(day),
+                        isSelected: calendar.isDate(day, inSameDayAs: selected),
+                        dot: dots[day],
+                        size: 28
+                    )
+                    .onTapGesture { select(day) }
+                    .help(Self.summary(events[day] ?? []))
+                }
+            }
+        }
+    }
+
+    static func days(from start: Date) -> [Date] {
+        (0..<7).compactMap { Calendar.current.date(byAdding: .day, value: $0, to: start) }
+    }
+
+    /// "10:00 Toplantı", a line per event. Empty, so no tooltip, on a free day.
+    static func summary(_ events: [DayEvent]) -> String {
+        events.map { event in
+            let time = event.isAllDay ? String(localized: "Tüm gün") : event.start.formatted(date: .omitted, time: .shortened)
+            return "\(time) \(event.title)"
+        }
+        .joined(separator: "\n")
+    }
+}
+
 private struct DayCell: View {
     let day: Date
     let isInMonth: Bool
     let isToday: Bool
     let isSelected: Bool
     let dot: String?
+    var size: CGFloat = 22
 
     var body: some View {
         ZStack {
@@ -308,16 +433,16 @@ private struct DayCell: View {
                 Circle().strokeBorder(.tint, lineWidth: 1.5)
             }
             Text(day, format: .dateTime.day())
-                .font(.system(size: 11, weight: isToday ? .bold : .medium).monospacedDigit())
+                .font(.system(size: size / 2, weight: isToday ? .bold : .medium).monospacedDigit())
                 .foregroundStyle(isToday ? Color.white : Color.white.opacity(isInMonth ? 0.9 : 0.28))
         }
-        .frame(width: 22, height: 22)
+        .frame(width: size, height: size)
         .overlay(alignment: .bottom) {
             if let dot, !isToday {
                 Circle()
                     .fill(Color(hex: dot))
                     .frame(width: 3.5, height: 3.5)
-                    .offset(y: 3)
+                    .offset(y: 5)
             }
         }
         .frame(maxWidth: .infinity)

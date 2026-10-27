@@ -60,9 +60,9 @@ struct TimerTile: View {
                 running
             }
         }
-        .padding(10)
+        .padding(settings.homeStyle == .dashboard ? 10 : 0)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: settings.homeStyle == .minimal ? .leading : .topLeading)
-        .islandTile()
+        .homeColumn(settings.homeStyle)
     }
 
     /// The minimal strip: the time left while running, else two quick starts.

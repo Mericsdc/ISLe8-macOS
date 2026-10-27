@@ -2,8 +2,11 @@ import SwiftUI
 
 /// Claude, Codex and Gemini limits under the AI tab's cards: a ring per vendor for the window
 /// that runs out first, with the weekly one beside it.
+/// The limits card: side by side under the run on the dashboard, or `stacked` in a column of
+/// equal rows beside it in the shorter strips.
 struct UsageStrip: View {
     @Environment(UsageModule.self) private var usage
+    var stacked = false
 
     var body: some View {
         if usage.isEnabled, !usage.snapshots.isEmpty {
@@ -38,38 +41,60 @@ struct UsageStrip: View {
                         .accessibilityLabel("Yenile")
                     }
                 }
-                HStack(alignment: .top, spacing: 10) {
-                    ForEach(usage.snapshots) { snapshot in
-                        VendorUsage(snapshot: snapshot)
-                            .frame(maxWidth: .infinity, alignment: .leading)
+                if stacked {
+                    VStack(alignment: .leading, spacing: 6) {
+                        ForEach(usage.snapshots) { snapshot in
+                            VendorUsage(snapshot: snapshot, compact: true)
+                                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+                        }
+                    }
+                } else {
+                    HStack(alignment: .top, spacing: 10) {
+                        ForEach(usage.snapshots) { snapshot in
+                            VendorUsage(snapshot: snapshot)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
                     }
                 }
             }
-            .padding(12)
+            .padding(stacked ? 10 : 12)
+            .frame(maxHeight: stacked ? .infinity : nil, alignment: .top)
             .islandTile()
         }
     }
 }
 
+/// One service: its ring, then its windows. `compact` puts the windows on one line and the
+/// reset time in the tooltip, for the stacked column.
 private struct VendorUsage: View {
     let snapshot: UsageSnapshot
+    var compact = false
 
     var body: some View {
         HStack(spacing: 8) {
-            UsageRing(vendor: snapshot.vendor, used: current(snapshot.bar), size: 34)
+            UsageRing(vendor: snapshot.vendor, used: current(snapshot.bar), size: compact ? 30 : 34)
             VStack(alignment: .leading, spacing: 1) {
                 Text(snapshot.vendor.displayName)
                     .font(.system(size: 12, weight: .semibold))
                     .lineLimit(1)
                 switch snapshot.state {
+                case .ok where compact:
+                    HStack(spacing: 6) {
+                        ForEach(snapshot.windows.prefix(2)) { window in
+                            Text(verbatim: "\(window.label) \(percent(current(window)))")
+                                .foregroundStyle(window.isHot ? Color.orange : Color.white.opacity(0.6))
+                        }
+                    }
+                    .lineLimit(1)
+                    .help(resetText ?? "")
                 case .ok:
                     ForEach(snapshot.windows.prefix(2)) { window in
                         Text(verbatim: "\(window.label) \(percent(current(window)))")
                             .foregroundStyle(window.isHot ? Color.orange : Color.white.opacity(0.6))
                             .lineLimit(1)
                     }
-                    if let reset = snapshot.bar?.resetsAt, !(snapshot.bar?.resetPassed ?? true) {
-                        Text("Sıfırlanma \(UsageFetch.relativeDay(reset))")
+                    if let resetText {
+                        Text(resetText)
                             .foregroundStyle(Color.white.opacity(0.4))
                             .lineLimit(1)
                     }
@@ -86,6 +111,11 @@ private struct VendorUsage: View {
             .font(.system(size: 10))
         }
         .help(snapshot.plan.isEmpty ? snapshot.vendor.product : "\(snapshot.vendor.product) · \(snapshot.plan)")
+    }
+
+    private var resetText: String? {
+        guard let reset = snapshot.bar?.resetsAt, !(snapshot.bar?.resetPassed ?? true) else { return nil }
+        return String(localized: "Sıfırlanma \(UsageFetch.relativeDay(reset))")
     }
 
     /// A window whose reset time has passed no longer counts.

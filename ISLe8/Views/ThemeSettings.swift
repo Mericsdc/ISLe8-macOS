@@ -1,8 +1,9 @@
 import SwiftUI
 import UniformTypeIdentifiers
 
-/// Settings > Appearance: pick a theme from the gallery, then fine-tune it below. Changing a
-/// built-in theme makes a copy of it, so the presets stay as they are.
+/// Settings > Appearance: pick a theme from the gallery, then fine-tune it below. Changes are
+/// made to the theme itself, built-in ones included; a changed built-in theme can be put back
+/// as it came.
 struct ThemeSettings: View {
     @Environment(SettingsStore.self) private var settings
 
@@ -19,7 +20,7 @@ struct ThemeSettings: View {
             Text("Özelleştir")
         } footer: {
             Text(settings.theme.isPreset
-                 ? String(localized: "Hazır bir temayı değiştirdiğinde bir kopyası oluşur; aslı olduğu gibi kalır.")
+                 ? String(localized: "Değişiklikler bu temaya kaydedilir; \"Varsayılana döndür\" ilk haline getirir.")
                  : String(localized: "Ada kapalıyken her temada siyah kalır, notch'la kaynaşsın diye."))
                 .foregroundStyle(.secondary)
         }
@@ -144,6 +145,8 @@ private struct ThemeEditor: View {
                 Button("İçe aktar…", action: importTheme)
                 if !theme.isPreset {
                     Button("Sil", role: .destructive, action: deleteTheme)
+                } else if settings.customThemes.contains(where: { $0.id == theme.id }) {
+                    Button("Varsayılana döndür", action: resetTheme)
                 }
             }
         }
@@ -165,19 +168,23 @@ private struct ThemeEditor: View {
         )
     }
 
-    /// Changes the selected theme; a preset is copied first.
+    /// Changes the selected theme in place. The first change to a preset stores it, under its
+    /// own ID, among the user's themes.
     private func edit(_ change: (inout IslandTheme) -> Void) {
-        var theme = settings.theme
-        if theme.isPreset {
-            theme.id = UUID().uuidString
-            theme.name = String(localized: "\(theme.name) · özel")
-            change(&theme)
-            settings.customThemes.append(theme)
-            settings.themeID = theme.id
-            return
+        let theme = settings.theme
+        if let index = settings.customThemes.firstIndex(where: { $0.id == theme.id }) {
+            change(&settings.customThemes[index])
+        } else {
+            var changed = theme
+            change(&changed)
+            settings.customThemes.append(changed)
         }
-        guard let index = settings.customThemes.firstIndex(where: { $0.id == theme.id }) else { return }
-        change(&settings.customThemes[index])
+    }
+
+    /// A changed preset as it came.
+    private func resetTheme() {
+        let id = settings.themeID
+        settings.customThemes.removeAll { $0.id == id }
     }
 
     private func deleteTheme() {

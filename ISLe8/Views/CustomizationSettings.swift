@@ -61,8 +61,25 @@ struct AppearanceSettings: View {
 
             Section("Başlık çubuğu") {
                 Toggle("Pil", isOn: $settings.showBatteryChip)
+                Toggle("Kablolu bağlantı (LAN)", isOn: $settings.showNetworkChip)
                 Toggle("Uyanık tut düğmesi", isOn: $settings.showKeepAwakeChip)
                 Toggle("Kamera ve mikrofon göstergesi", isOn: $settings.showPrivacyChip)
+            }
+
+            Section {
+                Toggle("Özel gün süslemeleri", isOn: $settings.showSeasonal)
+                Picker("Önizle", selection: $settings.seasonalPreview) {
+                    Text("Önizleme yok").tag(Occasion?.none)
+                    ForEach(Occasion.allCases) { occasion in
+                        Text(verbatim: "\(occasion.name) · \(occasion.period)").tag(Occasion?.some(occasion))
+                    }
+                }
+            } header: {
+                Text("Özel günler")
+            } footer: {
+                Text(Occasion.current().map { String(localized: "Bugün: \($0.name). Süsler yalnızca ada açıkken, içeriğin arkasında görünür.") }
+                     ?? String(localized: "Bugün özel bir gün yok. Süsler yalnızca ada açıkken, içeriğin arkasında görünür."))
+                    .foregroundStyle(.secondary)
             }
 
             Section {
@@ -81,8 +98,8 @@ extension AppearanceSettings {
     fileprivate var homeStyleNote: String {
         switch settings.homeStyle {
         case .dashboard: String(localized: "Takvim ayı, büyük oynatıcı ve ayrıntılı hava; ~820 pt genişlik.")
-        case .compact: String(localized: "Aynı sütunlar, daha küçük: bugünün etkinlikleri, küçük oynatıcı, kısa hava; ~640 pt.")
-        case .minimal: String(localized: "Tek ince şerit: şarkı ve kontroller, hava, sıradaki etkinlik; ~600 pt. Diğer sekmeler açılınca ada büyür.")
+        case .compact: String(localized: "Kartsız tek şerit: bu hafta, ortada oynatıcı, hava ve 5 gün; ~870 pt. Diğer sekmeler açılınca ada büyür.")
+        case .minimal: String(localized: "Tek ince satır: sıradaki etkinlik, ortada şarkı ve kontroller, şehir ve hava; ~720 pt. Diğer sekmeler açılınca ada büyür.")
         }
     }
 }

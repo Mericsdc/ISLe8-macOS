@@ -35,6 +35,9 @@ struct WeatherReport: Equatable {
     var isDay: Bool
     var high: Double
     var low: Double
+    /// Today's weather as a whole, for the forecast row; `code` is the sky right now.
+    var todayCode: Int
+    var todayRainChance: Int?
     var place: String
     var fetchedAt: Date
     var feelsLike: Double
@@ -46,7 +49,7 @@ struct WeatherReport: Equatable {
     var uvIndex: Double
     /// The next five hours after the current one.
     var hours: [Hour]
-    /// The next five days after today.
+    /// The next nine days after today.
     var days: [Day]
 }
 
@@ -197,7 +200,7 @@ final class WeatherModule: IslandModule {
             URLQueryItem(name: "hourly", value: "temperature_2m,weather_code,is_day"),
             URLQueryItem(name: "forecast_hours", value: "6"),
             URLQueryItem(name: "daily", value: "weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max"),
-            URLQueryItem(name: "forecast_days", value: "6"),
+            URLQueryItem(name: "forecast_days", value: "10"),
             URLQueryItem(name: "wind_speed_unit", value: unit == .fahrenheit ? "mph" : "kmh"),
             URLQueryItem(name: "timezone", value: "auto"),
             URLQueryItem(name: "temperature_unit", value: unit == .fahrenheit ? "fahrenheit" : "celsius"),
@@ -236,6 +239,8 @@ final class WeatherModule: IslandModule {
             isDay: current.is_day == 1,
             high: daily.temperature_2m_max.first ?? current.temperature_2m,
             low: daily.temperature_2m_min.first ?? current.temperature_2m,
+            todayCode: daily.weather_code.first ?? current.weather_code,
+            todayRainChance: daily.precipitation_probability_max?.first ?? nil,
             place: place.name,
             fetchedAt: Date(),
             feelsLike: current.apparent_temperature ?? current.temperature_2m,

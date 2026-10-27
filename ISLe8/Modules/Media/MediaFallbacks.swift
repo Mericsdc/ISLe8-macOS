@@ -22,6 +22,30 @@ enum PlayerScript {
         tell(player, "set player position to \(seconds)")
     }
 
+    /// The player's own volume, 0–100. Only asked while it is the one playing, so this never
+    /// launches it.
+    nonisolated static func volume(of player: PlayerApp) async -> Int? {
+        await withCheckedContinuation { continuation in
+            DispatchQueue.global(qos: .userInitiated).async {
+                let process = Process()
+                process.executableURL = URL(fileURLWithPath: "/usr/bin/osascript")
+                process.arguments = ["-e", "tell application \"\(player.scriptingName)\" to sound volume"]
+                let pipe = Pipe()
+                process.standardOutput = pipe
+                process.standardError = FileHandle.nullDevice
+                guard (try? process.run()) != nil else { return continuation.resume(returning: nil) }
+                let data = pipe.fileHandleForReading.readDataToEndOfFile()
+                process.waitUntilExit()
+                let text = String(decoding: data, as: UTF8.self).trimmingCharacters(in: .whitespacesAndNewlines)
+                continuation.resume(returning: Int(text))
+            }
+        }
+    }
+
+    static func setVolume(_ volume: Int, on player: PlayerApp) {
+        tell(player, "set sound volume to \(min(max(volume, 0), 100))")
+    }
+
     /// osascript runs out of process, so a pending permission prompt never blocks the island.
     private static func tell(_ player: PlayerApp, _ statement: String) {
         let process = Process()

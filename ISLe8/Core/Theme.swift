@@ -152,7 +152,7 @@ nonisolated struct IslandTheme: Codable, Equatable, Identifiable, Sendable {
         ),
         IslandTheme(
             id: "glass", name: "Liquid Glass", material: .glass,
-            background: "#000000", surface: "#FFFFFF14", border: "#FFFFFF1F", accent: "#64D2FF",
+            background: "#000000", surface: "#0000003D", border: "#FFFFFF29", accent: "#64D2FF",
             cornerRadius: 18
         ),
         IslandTheme(

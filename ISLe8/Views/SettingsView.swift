@@ -76,16 +76,33 @@ struct SettingsView: View {
 private struct SystemSettings: View {
     @Environment(SettingsStore.self) private var settings
     @Environment(HUDModule.self) private var hud
+    @Environment(SystemModule.self) private var system
+    @State private var needsAccessibility = false
 
     var body: some View {
         @Bindable var settings = settings
 
         Form {
+            Section("Klavye temizliği") {
+                LabeledContent {
+                    Button("Klavyeyi kilitle") {
+                        needsAccessibility = !system.lockKeyboard()
+                    }
+                } label: {
+                    Text("Klavyeyi temizle")
+                    Text("Klavyeyi iki dakikalığına kilitler; silerken tuşlar bir şey yazmaz. Fare ve trackpad çalışır, ekrandaki düğmeyle istediğin an açarsın. Erişilebilirlik izni gerekir.")
+                }
+                if needsAccessibility {
+                    Text("Erişilebilirlik izni yok. Sistem Ayarları > Gizlilik ve Güvenlik > Erişilebilirlik'ten ISLe8'i açıp yeniden dene.")
+                        .foregroundStyle(Color.orange)
+                }
+            }
+
             Section("Göstergeler") {
                 Toggle("Ses değişince göster", isOn: $settings.showVolumeHUD)
                 Toggle(isOn: $settings.showBrightnessHUD) {
                     Text("Parlaklık değişince göster")
-                    Text("Otomatik parlaklığın yavaş ayarları gösterilmez.")
+                    Text("Yalnızca parlaklık tuşlarıyla yapılan değişiklikler; otomatik parlaklık ve ekranın kararması gösterilmez.")
                 }
                 Toggle(isOn: $settings.replaceSystemHUD) {
                     Text("Sistem göstergesinin yerine ISLe8'inkini kullan")
@@ -104,7 +121,7 @@ private struct SystemSettings: View {
             Section("Pil") {
                 Toggle(isOn: $settings.showBatteryAlerts) {
                     Text("Şarj ve pil uyarılarını göster")
-                    Text("Şarja takınca, tam dolunca ve pil %20 ile %10'a inince.")
+                    Text("Şarja takınca, çıkarınca ve pil %20 ile %10'a inince.")
                 }
             }
 
@@ -112,6 +129,10 @@ private struct SystemSettings: View {
                 Toggle("Cihaz bağlanınca pillerini göster", isOn: $settings.showDeviceConnectedAlert)
                 Toggle("Cihazın pili %15'e inince uyar", isOn: $settings.showDeviceLowBatteryAlert)
                 Toggle("Başlıkta cihaz pilleri", isOn: $settings.showDevicesChip)
+                Toggle(isOn: $settings.showAppleDevices) {
+                    Text("iPhone ve iPad pilleri")
+                    Text("Bu Mac'e güvenen iPhone ve iPad'ler, Finder'ın onlara ulaştığı yolla okunur: kabloyla ya da Finder'da \"Wi-Fi'deyken bu iPhone'u göster\" açıkken aynı ağda. Yalnızca okunur, izin gerekmez.")
+                }
             } header: {
                 Text("Kablosuz cihazlar")
             } footer: {
@@ -373,6 +394,10 @@ private struct GeneralSettings: View {
                     get: { settings.launchAtLogin },
                     set: { settings.setLaunchAtLogin($0) }
                 ))
+                Toggle(isOn: $settings.showMenuBarIcon) {
+                    Text("Menü çubuğunda simge")
+                    Text("Kapalıyken ayarlar adadaki ⚙ düğmesiyle ya da ISLe8'i yeniden açınca açılır.")
+                }
             }
 
             Section {
@@ -528,6 +553,14 @@ private struct MediaSettings: View {
             Section {
                 Toggle("Şarkı değişince kısaca göster", isOn: $settings.showTrackChangeAlert)
                 Toggle("Kulakta ses çubukları", isOn: $settings.showVisualizer)
+                Picker(selection: $settings.defaultPlayer) {
+                    Text("Son kullanılan").tag("")
+                    Text(verbatim: "Spotify").tag(PlayerApp.spotify.rawValue)
+                    Text("Müzik").tag(PlayerApp.music.rawValue)
+                } label: {
+                    Text("Varsayılan müzik uygulaması")
+                    Text("Hiçbir şey çalmıyorken oynat'a basınca arka planda açılır ve kaldığı yerden devam eder.")
+                }
                 LabeledContent("MediaRemote köprüsü", value: bridgeStatus)
             }
         }

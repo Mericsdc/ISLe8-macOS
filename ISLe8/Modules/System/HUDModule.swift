@@ -33,9 +33,6 @@ final class HUDModule: IslandModule {
     @ObservationIgnored private var isStarted = false
     @ObservationIgnored private var lastVolume: (level: Float, muted: Bool)?
     /// Brightness at the start of the current burst of changes.
-    @ObservationIgnored private var brightnessBaseline: Float?
-    @ObservationIgnored private var lastBrightnessChange = Date.distantPast
-    @ObservationIgnored private var lastBrightnessHUD = Date.distantPast
 
     private static let step: Float = 1 / 16
     private static let fineStep: Float = 1 / 64
@@ -107,20 +104,16 @@ final class HUDModule: IslandModule {
         onHUD?(HUDValue(kind: .volume, level: Double(level), isMuted: muted))
     }
 
-    /// Automatic brightness nudges the value a little at a time. A HUD appears only for a
-    /// clear change within a short burst, as the keys or the Control Center slider make.
+    /// Only the brightness keys bring up the HUD. Automatic brightness, dimming when idle and
+    /// waking the screen change the level too, but with no key pressed just before. The keys
+    /// arrive as NX_SYSDEFINED events; asking when the last one came needs no permission.
     private func brightnessChanged(_ value: Float) {
-        let now = Date()
-        if now.timeIntervalSince(lastBrightnessChange) > 1 {
-            brightnessBaseline = value
-        }
-        lastBrightnessChange = now
-        let isOngoing = now.timeIntervalSince(lastBrightnessHUD) < 1.5
-        let isClearChange = abs(value - (brightnessBaseline ?? value)) >= 0.04
-        guard isOngoing || isClearChange else { return }
-        lastBrightnessHUD = now
+        let sinceKey = CGEventSource.secondsSinceLastEventType(.hidSystemState, eventType: Self.systemDefined)
+        guard sinceKey < 1.2 else { return }
         onHUD?(HUDValue(kind: .brightness, level: Double(value)))
     }
+
+    private static let systemDefined = CGEventType(rawValue: 14)!
 
     // MARK: Keys, when replacing the system HUD
 
@@ -140,7 +133,6 @@ final class HUDModule: IslandModule {
             guard let current = brightness.brightness else { return false }
             let target = key == .brightnessUp ? current + step : current - step
             guard brightness.setBrightness(Self.snap(target, to: step)) else { return false }
-            lastBrightnessHUD = Date()
             onHUD?(HUDValue(kind: .brightness, level: Double(Self.snap(target, to: step))))
         }
         return true

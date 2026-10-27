@@ -5,7 +5,7 @@ struct IslandRootView: View {
     let model: IslandModel
 
     var body: some View {
-        let theme = model.settings.theme
+        let theme = model.settings.islandTheme
         IslandView()
             .environment(model)
             .environment(model.settings)
@@ -37,6 +37,7 @@ struct ModuleEnvironment: ViewModifier {
             .environment(module(PaletteModule.self))
             .environment(module(UsageModule.self))
             .environment(module(DevicesModule.self))
+            .environment(module(NotesModule.self))
     }
 
     private func module<T>(_ type: T.Type) -> T? {
@@ -54,16 +55,45 @@ private struct IslandBackground: View {
 
     var body: some View {
         let isOpen = [.expanded, .alert, .dropTarget].contains(model.state) && model.alert != .unlocked
-        switch isOpen ? theme.material : .black {
+        // The theme fades in over the black rather than replacing it, so the island never
+        // turns see-through halfway. Only glass lets the black go.
+        ZStack {
+            shape.fill(Color.black)
+                .opacity(isOpen && theme.material == .glass ? 0 : 1)
+            if isOpen && theme.material != .black {
+                themeFill
+                    .transition(.opacity)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var themeFill: some View {
+        switch theme.material {
         case .glass:
+            // Apple's clear glass: the colours behind bleed through and bend a little at the
+            // edges. Darker in the middle, where the text is, so it reads over anything; a
+            // thin rim catches the light along the bottom. The notch row stays black.
             if #available(macOS 26.0, *) {
                 Color.clear
-                    .glassEffect(.regular.tint(Color.black.opacity(0.45)), in: shape)
+                    .glassEffect(.clear.tint(Color.black.opacity(0.1)), in: shape)
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 22, style: .continuous)
+                            .fill(Color.black.opacity(0.34))
+                            .padding(14)
+                            .blur(radius: 16)
+                            .clipShape(shape)
+                    }
+                    .overlay(shape.stroke(rim, lineWidth: 1.5))
+                    .overlay(shape.fill(underNotch(.clear, .clear)))
             } else {
                 shape.fill(Color.black.opacity(0.85))
             }
         case .artwork:
-            shape.fill(underNotch(Color(nsColor: media.info?.accent ?? .darkGray).opacity(0.55), .black))
+            // On black, so the artwork colour tints the island instead of letting the windows
+            // behind show through it.
+            shape.fill(Color.black)
+                .overlay(shape.fill(underNotch(Color(nsColor: media.info?.accent ?? .darkGray).opacity(0.55), .black)))
         case .solid:
             shape.fill(underNotch(theme.background.color, theme.background.color))
         case .gradient:
@@ -71,6 +101,18 @@ private struct IslandBackground: View {
         case .black:
             shape.fill(Color.black)
         }
+    }
+
+    /// Clear along the notch row, brightening towards the bottom edge.
+    private var rim: LinearGradient {
+        let height = max(model.size(for: model.state).height, 1)
+        let band = min((model.geometry?.notchSize.height ?? 32) / height, 0.5)
+        return LinearGradient(stops: [
+            .init(color: .clear, location: 0),
+            .init(color: .clear, location: band),
+            .init(color: Color.white.opacity(0.16), location: min(band + 0.25, 1)),
+            .init(color: Color.white.opacity(0.42), location: 1),
+        ], startPoint: .top, endPoint: .bottom)
     }
 
     /// Black across the notch row, so the notch never shows as a bite out of a coloured
@@ -99,42 +141,58 @@ struct IslandView: View {
 
     var body: some View {
         let size = model.size(for: model.state)
-        let shape = IslandShape(
-            shoulder: model.shoulder(for: model.state),
-            bottomRadius: model.bottomRadius(for: model.state)
-        )
+        let shoulder = model.shoulder(for: model.state)
+        let radius = model.bottomRadius(for: model.state)
+        let outline = CenteredIslandShape(size: size, shoulder: shoulder, bottomRadius: radius)
 
+        // Everything sits in one fixed frame the size of the window, centred under the notch;
+        // only the fill and the outline grow and shrink. Inside a frame that grows, the views
+        // would be placed from its left edge and slide sideways while the island opens.
         ZStack(alignment: .top) {
-            IslandBackground(shape: shape)
+            IslandBackground(shape: IslandShape(shoulder: shoulder, bottomRadius: radius))
+                .frame(width: size.width, height: size.height)
+            if model.state == .expanded, let occasion = model.settings.activeOccasion {
+                SeasonalDecor(
+                    occasion: occasion, shoulder: shoulder, bottomRadius: radius,
+                    headerHeight: model.geometry?.notchSize.height ?? 36
+                )
+                .frame(width: size.width, height: size.height)
+                    .transition(.opacity)
+            }
             content
-                .padding(.horizontal, model.shoulder(for: model.state))
         }
-        .frame(width: size.width, height: size.height, alignment: .top)
-        .clipShape(shape)
-        .contentShape(shape)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .clipShape(outline)
+        .contentShape(outline)
         .onTapGesture { model.open() }
-        .animation(model.animation, value: model.state)
-        .animation(model.animation, value: model.tab)
         // External monitors from 1080p to 4K: drawn larger or smaller, growing down from the top.
         .scaleEffect(model.scale, anchor: .top)
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .animation(model.animation, value: model.state)
+        .animation(model.animation, value: model.tab)
     }
 
+    /// Each state's views carry their own frame, so a state that appears is laid out straight
+    /// under the notch instead of inside the frame of the state before it.
     @ViewBuilder
     private var content: some View {
+        let size = model.size(for: model.state)
+        let shoulder = model.shoulder(for: model.state)
         switch model.state {
         case .idle:
             EmptyView()
         case .compact, .peek:
             CompactView()
+                .islandFrame(size, shoulder: shoulder)
                 .transition(.opacity)
         case .alert:
             AlertView()
+                .islandFrame(size, shoulder: shoulder)
                 .transition(.opacity)
         case .expanded:
             // The content settles in just behind the shell and folds back up into the notch
             // with it, instead of vanishing and leaving an empty box to shrink.
             ExpandedView()
+                .islandFrame(size, shoulder: shoulder)
                 .transition(.asymmetric(
                     insertion: .opacity.combined(with: .scale(scale: 0.94, anchor: .top))
                         .animation(.easeOut(duration: 0.22).delay(0.06)),
@@ -143,8 +201,16 @@ struct IslandView: View {
                 ))
         case .dropTarget:
             DropTargetView()
+                .islandFrame(size, shoulder: shoulder)
                 .transition(.opacity.animation(.easeOut(duration: 0.15)))
         }
+    }
+}
+
+private extension View {
+    func islandFrame(_ size: CGSize, shoulder: CGFloat) -> some View {
+        padding(.horizontal, shoulder)
+            .frame(width: size.width, height: size.height, alignment: .top)
     }
 }
 
@@ -175,6 +241,14 @@ struct AlertView: View {
             UnlockedAlertView()
         case .hud(let value):
             HUDAlertView(value: value)
+        case .battery(.pluggedIn(let percent)):
+            StatusEarsView(symbol: "battery.100percent.bolt", text: String(localized: "%\(percent)"), label: String(localized: "Şarj oluyor"))
+        case .battery(.unplugged(let percent)):
+            StatusEarsView(symbol: "battery.75percent", text: String(localized: "%\(percent)"), label: String(localized: "Pilde"), tint: .white)
+        case .wired(true):
+            StatusEarsView(symbol: "cable.connector.horizontal", text: "LAN", label: String(localized: "Kabloyla bağlandı"))
+        case .wired(false):
+            StatusEarsView(symbol: model.modules.lazy.compactMap { $0 as? SystemModule }.first?.network == .offline ? "wifi.slash" : "wifi", text: model.modules.lazy.compactMap { $0 as? SystemModule }.first?.network == .offline ? String(localized: "Çevrimdışı") : "Wi-Fi", label: String(localized: "Kablo çıkarıldı"), tint: .white)
         default:
             banner
         }
@@ -209,7 +283,7 @@ struct AlertView: View {
                     DeviceAlertView(device: device, isLow: false)
                 case .deviceLowBattery(let device):
                     DeviceAlertView(device: device, isLow: true)
-                case .unlocked, .hud, nil:
+                case .unlocked, .hud, .wired, nil:
                     EmptyView()
                 }
             }
@@ -236,8 +310,12 @@ struct ExpandedView: View {
                     ClipboardTab()
                 case .agents:
                     AgentsTab()
+                case .notes:
+                    NotesTab()
                 case .devices:
                     DevicesTab()
+                case .system:
+                    SystemTab()
                 case .palette:
                     PaletteTab()
                 }

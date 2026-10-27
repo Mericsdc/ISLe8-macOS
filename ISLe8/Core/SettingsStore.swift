@@ -66,7 +66,7 @@ final class SettingsStore {
     }
 
     // Tabs, Home tiles and live activities, by id, in the user's order.
-    static let allTabs = ["home", "shelf", "clipboard", "agents", "devices"]
+    static let allTabs = ["home", "shelf", "clipboard", "notes", "agents", "devices", "system"]
     /// Home's columns, left to right.
     static let allHomeTiles = ["calendar", "media", "weather", "timer"]
     static let allActivities = ["agents", "media", "timer", "system"]
@@ -250,6 +250,13 @@ final class SettingsStore {
     var showDevicesChip: Bool {
         didSet { defaults.set(showDevicesChip, forKey: Key.showDevicesChip) }
     }
+    /// iPhones and iPads that trust this Mac, read the way Finder reaches them. Off by default.
+    var showAppleDevices: Bool {
+        didSet {
+            defaults.set(showAppleDevices, forKey: Key.showAppleDevices)
+            notifyModules()
+        }
+    }
 
     // MARK: Widgets
 
@@ -301,7 +308,12 @@ final class SettingsStore {
             defaults.set(String(decoding: data, as: UTF8.self), forKey: Key.customThemes)
         }
     }
-    var allThemes: [IslandTheme] { IslandTheme.presets + customThemes }
+    /// The presets, each as the user changed it if they did, then the user's own themes. A
+    /// changed preset is kept among `customThemes` under the preset's own ID.
+    var allThemes: [IslandTheme] {
+        let presets = IslandTheme.presets.map { preset in customThemes.first { $0.id == preset.id } ?? preset }
+        return presets + customThemes.filter { !$0.isPreset }
+    }
     var theme: IslandTheme {
         allThemes.first { $0.id == themeID } ?? .notchBlack
     }
@@ -335,6 +347,35 @@ final class SettingsStore {
     /// Which live activity gets the ears when several want them, most important first.
     var activityOrder: [String] {
         didSet { defaults.set(activityOrder, forKey: Key.activityOrder) }
+    }
+    /// The player that play opens when nothing is playing: a PlayerApp bundle ID, or empty
+    /// for the one used last.
+    var defaultPlayer: String {
+        didSet { defaults.set(defaultPlayer, forKey: Key.defaultPlayer) }
+    }
+    /// Decorations on the open island on days celebrated worldwide.
+    var showSeasonal: Bool {
+        didSet { defaults.set(showSeasonal, forKey: Key.showSeasonal) }
+    }
+    /// An occasion picked in Settings to see its decoration now; not saved.
+    var seasonalPreview: Occasion?
+    /// A "LAN" chip in the header while the Mac is online through an Ethernet cable.
+    var showNetworkChip: Bool {
+        didSet { defaults.set(showNetworkChip, forKey: Key.showNetworkChip) }
+    }
+    /// The theme the island wears: the user's, or a special day's over it.
+    var islandTheme: IslandTheme {
+        activeOccasion.map { $0.theme(over: theme) } ?? theme
+    }
+    /// What the open island is decorated for right now.
+    var activeOccasion: Occasion? {
+        if let seasonalPreview { return seasonalPreview }
+        return showSeasonal ? Occasion.current() : nil
+    }
+    /// The capsule in the menu bar. Without it, Settings opens from the island's gear or by
+    /// opening ISLe8 again.
+    var showMenuBarIcon: Bool {
+        didSet { defaults.set(showMenuBarIcon, forKey: Key.showMenuBarIcon) }
     }
     var showBatteryChip: Bool {
         didSet { defaults.set(showBatteryChip, forKey: Key.showBatteryChip) }
@@ -439,6 +480,11 @@ final class SettingsStore {
             Key.hiddenTabs: [String](),
             Key.homeTiles: ["calendar", "media", "weather"],
             Key.activityOrder: Self.allActivities,
+            Key.showMenuBarIcon: true,
+            Key.showSeasonal: true,
+            Key.showNetworkChip: true,
+            Key.showAppleDevices: false,
+            Key.defaultPlayer: "",
             Key.showBatteryChip: true,
             Key.showKeepAwakeChip: true,
             Key.showPrivacyChip: true,
@@ -531,6 +577,11 @@ final class SettingsStore {
         hiddenTabs = defaults.stringArray(forKey: Key.hiddenTabs) ?? []
         homeTiles = (defaults.stringArray(forKey: Key.homeTiles) ?? []).filter(Self.allHomeTiles.contains)
         activityOrder = Self.complete(defaults.stringArray(forKey: Key.activityOrder), with: Self.allActivities)
+        showMenuBarIcon = defaults.bool(forKey: Key.showMenuBarIcon)
+        showSeasonal = defaults.bool(forKey: Key.showSeasonal)
+        showNetworkChip = defaults.bool(forKey: Key.showNetworkChip)
+        showAppleDevices = defaults.bool(forKey: Key.showAppleDevices)
+        defaultPlayer = defaults.string(forKey: Key.defaultPlayer) ?? ""
         showBatteryChip = defaults.bool(forKey: Key.showBatteryChip)
         showKeepAwakeChip = defaults.bool(forKey: Key.showKeepAwakeChip)
         showPrivacyChip = defaults.bool(forKey: Key.showPrivacyChip)
@@ -661,6 +712,11 @@ final class SettingsStore {
         static let hiddenTabs = "hiddenTabs"
         static let homeTiles = "homeTiles"
         static let activityOrder = "activityOrder"
+        static let showMenuBarIcon = "showMenuBarIcon"
+        static let showSeasonal = "showSeasonal"
+        static let showNetworkChip = "showNetworkChip"
+        static let showAppleDevices = "showAppleDevices"
+        static let defaultPlayer = "defaultPlayer"
         static let showBatteryChip = "showBatteryChip"
         static let showKeepAwakeChip = "showKeepAwakeChip"
         static let showPrivacyChip = "showPrivacyChip"
